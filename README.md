@@ -128,7 +128,7 @@ TARGET = {
 ---
 
 # Calculation Result Example
-When calculation done, script would print the results into console just like below: *(Also script saves the result to a file called **result.txt**)*
+When calculation done, script would print the results into console just like below: *(Also script saves the result to the file called **result.txt**)*
 ```
 ROUNDS                             500000
 
