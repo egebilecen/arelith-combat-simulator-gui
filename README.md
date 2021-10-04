@@ -1,7 +1,7 @@
 Damage calculator for **Neverwinter Nights** game.
 
 # How To Use?
-Before you run the script with `python damage_calculator.py` command, you may want to set some values to reflect the damage calculation of weapon of your choice.
+Before you run the script with `python damage_calculator.py` command, you may want to set some values to reflect the damage calculation of weapon of your choice against customized target.
 Please see the below.
 
 **Note:** Once you run the script, it may take a while to calculate the damage averages based on targeted ac list and round count.
