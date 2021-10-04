@@ -93,6 +93,7 @@ CHARACTER = {
 ---
 
 **Target Properties**
+
 To set the values related your character's **target**, you need to find this line: (See the comments on the code for detailed description)
 
 ```python
