@@ -16,7 +16,8 @@ WEAPON = {
         {"name" : "Divine", "damage" : "1d6", "resistable" : True},
         {"name" : "Positive", "damage" : 2, "resistable" : False},
         {"name" : "Negative", "damage" : 2, "resistable" : False}
-    ]
+    ],
+    "massive_crit" : None
 }
 
 CHARACTER = {
@@ -169,6 +170,7 @@ print_f("WEAPON CRITICAL HIT MULTIPLIER", str(WEAPON["crit_multiplier"]))
 print_f("WEAPON OTHER DAMAGE BONUSES", "")
 for dmg_bonus in WEAPON["other_damage_bonus"]:
     print_f("    * "+dmg_bonus["name"].upper(), str(dmg_bonus["damage"]))
+print_f("WEAPON MASSIVE CRITICAL", "No" if WEAPON["massive_crit"] is None else str(WEAPON["massive_crit"]))
 print_f()
 print_f("CHARACTER AB", str(CHARACTER["ab"]))
 print_f("CHARACTER TOTAL APR", str(calculate_apr()))
@@ -246,6 +248,9 @@ for _ in range(ROUNDS):
                 other_damage  = get_weapon_other_damage(is_critical)
                 
                 if is_critical:
+                    if WEAPON["massive_crit"] is not None:
+                        weapon_damage += d(WEAPON["massive_crit"])
+
                     if CHARACTER["overwhelming_critical"]:
                         weapon_damage += d(6, WEAPON["crit_multiplier"])
                         
