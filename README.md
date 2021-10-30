@@ -51,7 +51,8 @@ WEAPON = {
         {"name" : "Divine", "damage" : "1d6", "resistable" : True},
         {"name" : "Positive", "damage" : 2, "resistable" : False},
         {"name" : "Negative", "damage" : 2, "resistable" : False}
-    ]
+    ],
+    "massive_crit"        : None            # Massive Critical dice. Can either be a value or a dice. For example 3 or "2d4".
 }
 ```
 
