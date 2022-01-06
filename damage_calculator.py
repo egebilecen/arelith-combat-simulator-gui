@@ -249,7 +249,7 @@ for _ in range(ROUNDS):
                 
                 if is_critical:
                     if WEAPON["massive_crit"] is not None:
-                        weapon_damage += d(WEAPON["massive_crit"])
+                        weapon_damage += d(str(WEAPON["massive_crit"])+"d1" if isinstance(WEAPON["massive_crit"], int) else WEAPON["massive_crit"])
 
                     if CHARACTER["overwhelming_critical"]:
                         weapon_damage += d(6, WEAPON["crit_multiplier"])
