@@ -26,7 +26,6 @@ CHARACTER = {
     "dual_wielding"         : False,
     "extra_attack"          : 1, # haste, etc
     "overwhelming_critical" : False,
-    "thundering_rage"       : False,
     "is_monk"               : True # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
 }
 
@@ -176,7 +175,6 @@ print_f("CHARACTER AB", str(CHARACTER["ab"]))
 print_f("CHARACTER TOTAL APR", str(calculate_apr()))
 print_f("CHARACTER IS MONK", str("Yes" if CHARACTER["is_monk"] else "No"))
 print_f("CHARACTER OVERWHELMING CRITICAL", str("Yes" if CHARACTER["overwhelming_critical"] else "No"))
-print_f("CHARACTER THUNDERING RAGE", str("Yes" if CHARACTER["thundering_rage"] else "No"))
 print_f()
 print_f("TARGET DEFENSIVE ESSENCE", str(TARGET["defensive_essence"]))
 print_f("TARGET CONCEALMENT", str(TARGET["concealment"])+"% ({0:.2f}% w/ blind fight)".format(apply_blind_fight(TARGET["concealment"])))
@@ -254,9 +252,6 @@ for _ in range(ROUNDS):
                     if CHARACTER["overwhelming_critical"]:
                         weapon_damage += d(6, WEAPON["crit_multiplier"])
                         
-                    if CHARACTER["thundering_rage"]:
-                        weapon_damage += d(6, 2)
-
                 if TARGET["physical_immunity"] > 0:
                     weapon_damage -= floor(weapon_damage * TARGET["physical_immunity"] / 100)
                     
