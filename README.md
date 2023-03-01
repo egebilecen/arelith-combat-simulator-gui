@@ -27,8 +27,11 @@ WEAPON = {
     
     "damage"              : "1d10",         # Weapon's damage dice. If your weapon got 2d4 dice, set it as 2d4.
     
-    "damage_bonus"        : 5 + 21,         # Damage bonus added on top of the weapon's damage. In this example, 5 comes from
-                                            # GMW scroll and 21 is the STR modifier of the character. Total of 26 damage bonus.
+    "damage_bonus"        : 5,              # Damage bonus added on top of the weapon's damage. In this example, 5 comes from
+                                            # GMW scroll as +5 enchantment bonus gives +5 bonus to damages. If you got a weapon
+                                            # with +6 damage bonus and have Epic Weapon Specialization feat, you should have set
+                                            # this value to 12 as +6 damage comes from damage bonus property and +6 damage comes
+                                            # from Epic Weapon Specialization feat as it also stacks with Weapon Specialization feat.
                                             
     "threat_range"        : 19,             # Threat range of weapon. You must take Improved Critical feat into considiration.
                                             # Naginata normally has 20 threat range. But with Improved Critical feat, it 
@@ -81,6 +84,8 @@ CHARACTER = {
                                      # For example let's assume you are a barbarian with haste and thundering rage active. Then you
                                      # would have 2 extra attacks and you should have set this "extra_attack" field to 2.
                                      # This example's character is a monk with haste thus I have set this "extra_attack" field to 1.
+    
+    "str_mod"               : 14,    # STR mod of your character.
     
     "overwhelming_critical" : False, # If set to True, it's extra damage on critical hits will be taken into account
                                      # when doing calculations.
