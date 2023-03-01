@@ -6,36 +6,35 @@ from math   import floor
 ROUNDS = 500000
 
 WEAPON = {
-    "name"                : "GMW Naginata",
-    "damage"              : "1d10",
-    "damage_bonus"        : 5 + 21,
-    "threat_range"        : 19,
-    "crit_multiplier"     : 2,
+    "name"                : "M. Damask Scimitar",
+    "damage"              : "1d6",
+    "damage_bonus"        : 6 + 6,
+    "threat_range"        : 10,
+    "crit_multiplier"     : 3,
     "other_damage_bonus"  : [
-        # {"name" : "Positive", "damage" : 4, "resistable" : True},
-        {"name" : "Divine", "damage" : "1d6", "resistable" : True},
-        {"name" : "Positive", "damage" : 2, "resistable" : False},
-        {"name" : "Negative", "damage" : 2, "resistable" : False}
+        {"name" : "Sonic", "damage" : "1d6", "resistable" : True},
+        {"name" : "Positive", "damage" : "1d6", "resistable" : True},
     ],
-    "massive_crit" : None
+    "massive_crit"        : None
 }
 
 CHARACTER = {
-    "ab"                    : 50,
-    "base_apr"              : 6,
-    "dual_wielding"         : False,
+    "ab"                    : 48,
+    "base_apr"              : 4,
+    "dual_wielding"         : True,
     "extra_attack"          : 1, # haste, etc
+    "str_mod"               : 14,
     "overwhelming_critical" : False,
-    "is_monk"               : True # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
+    "is_monk"               : False # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
 }
 
 TARGET = {
-    "ac_list"           : [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70],
+    "ac_list"           : [40, 45, 50, 55, 60, 65, 70],
     "defensive_essence" : 5,  # if resistable is TRUE in other_damage_bonus elements, it will be reduced by this amount.
     "concealment"       : 50, # calculation will be done as assuming attacker has blind fight.
     "epic_dodge"        : False,
     "crit_immunity"     : False,
-    "physical_immunity" : 0,
+    "physical_immunity" : 10,
     "physical_damage_reduction": 0
 }
 
@@ -85,7 +84,7 @@ def calculate_ab_from_attack_number(attack_number):
     if CHARACTER["is_monk"]: ab_penalty = 3
 
     if attack_number <= CHARACTER["base_apr"]:
-        return CHARACTER["ab"] - (ab_penalty * (attack_number - 1))
+        return CHARACTER["ab"] - (ab_penalty * (attack_number - 1)), "mainhand"
     else:
         if CHARACTER["extra_attack"] > 0 \
         and attack_number <= CHARACTER["base_apr"] + CHARACTER["extra_attack"]:
@@ -94,21 +93,28 @@ def calculate_ab_from_attack_number(attack_number):
 
             if CHARACTER["dual_wielding"]: ret_ab += 2
 
-            return ret_ab
+            return ret_ab, "extra_attack"
         elif  CHARACTER["dual_wielding"] \
         and attack_number <= calculate_apr():
             dw_atk_no = attack_number - calculate_apr() + 1
-            return CHARACTER["ab"] - (dw_atk_no * ab_penalty)
+            return CHARACTER["ab"] - (dw_atk_no * ab_penalty), "offhand"
 
     raise ValueError("error: cannot calculate ab from attack number, attack number: "+str(attack_number))
 
-def get_weapon_damage(is_crit=False):
+def get_weapon_damage(is_crit=False, is_offhand_attack=False):
     global WEAPON
 
     roll_amount = 1
     if is_crit: roll_amount = WEAPON["crit_multiplier"]
 
-    ret_val = d(WEAPON["damage"], roll_amount) + (WEAPON["damage_bonus"] * roll_amount)
+    weapon_dmg_bonus = WEAPON["damage_bonus"]
+
+    if is_offhand_attack:
+        weapon_dmg_bonus += int(CHARACTER["str_mod"] / 2)
+    else:
+        weapon_dmg_bonus += CHARACTER["str_mod"]
+
+    ret_val = d(WEAPON["damage"], roll_amount) + (weapon_dmg_bonus * roll_amount)
 
     return ret_val
 
@@ -173,6 +179,7 @@ print_f("WEAPON MASSIVE CRITICAL", "No" if WEAPON["massive_crit"] is None else s
 print_f()
 print_f("CHARACTER AB", str(CHARACTER["ab"]))
 print_f("CHARACTER TOTAL APR", str(calculate_apr()))
+print_f("CHARACTER STR MOD", str(CHARACTER["str_mod"]))
 print_f("CHARACTER IS MONK", str("Yes" if CHARACTER["is_monk"] else "No"))
 print_f("CHARACTER OVERWHELMING CRITICAL", str("Yes" if CHARACTER["overwhelming_critical"] else "No"))
 print_f()
@@ -208,7 +215,7 @@ for _ in range(ROUNDS):
                 result_list[target_ac] = example_result.copy()
                 result_list[target_ac]["total_bonus_damage"] = {}
 
-            character_ab = calculate_ab_from_attack_number(i + 1)
+            character_ab, attack_type = calculate_ab_from_attack_number(i + 1)
             result_list[target_ac]["total_attack"] += 1
 
             is_hit   = False
@@ -242,7 +249,7 @@ for _ in range(ROUNDS):
                     is_critical = True
                     result_list[target_ac]["total_crit"] += 1
 
-                weapon_damage = get_weapon_damage(is_critical)
+                weapon_damage = get_weapon_damage(is_critical, True if attack_type == "offhand" else False)
                 other_damage  = get_weapon_other_damage(is_critical)
                 
                 if is_critical:
@@ -251,7 +258,7 @@ for _ in range(ROUNDS):
 
                     if CHARACTER["overwhelming_critical"]:
                         weapon_damage += d(6, WEAPON["crit_multiplier"])
-                        
+
                 if TARGET["physical_immunity"] > 0:
                     weapon_damage -= floor(weapon_damage * TARGET["physical_immunity"] / 100)
                     
