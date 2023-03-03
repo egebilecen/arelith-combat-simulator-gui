@@ -293,6 +293,25 @@ def simulate(character):
 
     return ret_val
 
+def remove_values_within_offset(value_list, offset = 5.5):
+    to_remove_list = []
+
+    for i in range(len(value_list)):
+        for j in range(len(value_list)):
+            if i == j: continue
+
+            if abs(value_list[i] - value_list[j]) < offset:
+                if j not in to_remove_list:
+                    to_remove_list.append(j)
+
+    removed_count = 0
+
+    for i in to_remove_list:
+        del value_list[i - removed_count]
+        removed_count += 1
+
+    return value_list
+
 def draw_plot(result):
     global PLOT_IS_DRAWING
     global PLOT_Y_LIST
@@ -308,11 +327,10 @@ def draw_plot(result):
         x.append(target_ac)
         y.append(avg_damage)
 
-    PLOT_Y_LIST.append(y)
+    PLOT_Y_LIST.extend(y)
 
-    plt.plot(x, y, linestyle=next(PLOT_LINE_CYCLER), marker = "o", markersize=5, label = character["name"])
+    plt.plot(x, y, linestyle=next(PLOT_LINE_CYCLER), marker = "o", markersize=5, label = character["name"] + " (AB: "+str(character["ab"])+")")
     plt.legend()
-    plt.yticks(y)
     
     if not PLOT_IS_DRAWING:
         plt.grid()
@@ -326,33 +344,29 @@ def draw_plot(result):
     #     plt.text(a, b, str("{0:.2f}".format(b)))
 
 def draw_single_result_plot(result):
+    global PLOT_Y_LIST
     global PLOT_IS_DRAWING
+
     character = result[0]
 
     draw_plot(result)
 
+    plt.yticks(remove_values_within_offset(PLOT_Y_LIST))
     plt.savefig(RESULT_OUTPUT_DIR+slugify(character["name"])+".png")
     plt.close()
 
     PLOT_IS_DRAWING = False
 
 def draw_multiple_result_plot(result_list):
-    global PLOT_IS_DRAWING
     global PLOT_Y_LIST
+    global PLOT_IS_DRAWING
 
     for result in result_list:
         draw_plot(result)
-
+    
+    plt.yticks(remove_values_within_offset(PLOT_Y_LIST))
     plt.savefig(RESULT_OUTPUT_DIR+"result.png")
     plt.close()
-
-    arr_max_dmg = []
-
-    for arr in PLOT_Y_LIST:
-        if sum(arr) > sum(arr_max_dmg):
-            arr_max_dmg = arr
-
-    plt.yticks(arr_max_dmg)
 
     PLOT_IS_DRAWING = False
 
@@ -455,7 +469,7 @@ draw_multiple_result_plot([
         "name"                  : "20 f / 5 wm / 5 lm",
 
         "ab"                    : 50,
-        "base_apr"              : 4 + 6,
+        "base_apr"              : 4,
         "dual_wielding"         : False,
         "extra_attack"          : 1, # haste, thundering rage etc.
         "str_mod"               : 14,
