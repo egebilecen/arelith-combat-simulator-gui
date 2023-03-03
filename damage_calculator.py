@@ -1,12 +1,18 @@
+# Download required libraries by running commands below:
+# pip install matplotlib
+
 from random import randint
 from math   import floor
+import matplotlib.pyplot as plt
 
 #####################################################################
 # DEFINES
 ROUNDS = 500000
 
+PLOT_TITLE = "20 barb / 7 wm / 3 rog 10-20 rapier"
+
 WEAPON = {
-    "name"                : "M. Damask Scimitar",
+    "name"                : "M. Damask Rapier",
     "damage"              : "1d6",
     "damage_bonus"        : 6 + 6,
     "threat_range"        : 10,
@@ -21,8 +27,8 @@ WEAPON = {
 CHARACTER = {
     "ab"                    : 48,
     "base_apr"              : 4,
-    "dual_wielding"         : True,
-    "extra_attack"          : 1, # haste, etc
+    "dual_wielding"         : False,
+    "extra_attack"          : 2, # haste, etc
     "str_mod"               : 14,
     "overwhelming_critical" : False,
     "is_monk"               : False # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
@@ -165,6 +171,8 @@ print("---------------------------")
 print("Zaphiel's Damage Calculator")
 print("---------------------------\n")
 
+print_f(PLOT_TITLE)
+print_f()
 print_f("ROUNDS", str(ROUNDS))
 print_f()
 print_f("WEAPON NAME", WEAPON["name"])
@@ -293,7 +301,15 @@ print_f("\n-=[RESULTS]=-")
 
 results = sorted([(key, result_list[key]) for key in result_list])
 
+plot_x = []
+plot_y = []
+
 for target_ac, result in results:
+    avg_damage = result["total_damage"] / ROUNDS
+
+    plot_x.append(target_ac)
+    plot_y.append(avg_damage)
+
     print_f()
     print_f("TARGET AC", str(target_ac))
     print_f("TOTAL ATTACK", str(result["total_attack"]))
@@ -310,8 +326,19 @@ for target_ac, result in results:
         dmg = result["total_bonus_damage"][name]
         print_f("    * "+name.upper(), str(dmg))
     print_f()
-    print_f("AVARAGE DAMAGE PER ROUND", "{0:.2f}".format(result["total_damage"] / ROUNDS))
+    print_f("AVARAGE DAMAGE PER ROUND", "{0:.2f}".format(avg_damage))
     print_f("\n"+"="*50)
 
 with open("result.txt", "w") as f:
     f.write(RESULT_STR)
+
+plt.plot(plot_x, plot_y, marker = "o")
+
+plt.xlabel("Target AC")
+plt.ylabel("Avarage Damage Per Round")
+plt.title(PLOT_TITLE + " (AB: " + str(CHARACTER["ab"]) + ", Total APR: " + str(calculate_apr()) + ")")
+
+for a, b in zip(plot_x, plot_y):
+    plt.text(a, b, str(b))
+
+plt.savefig("./result.png")
