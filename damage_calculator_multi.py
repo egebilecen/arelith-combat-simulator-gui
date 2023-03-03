@@ -294,21 +294,14 @@ def simulate(character):
     return ret_val
 
 def remove_values_within_offset(value_list, offset = 5.5):
-    to_remove_list = []
+    value_list.sort()
 
-    for i in range(len(value_list)):
-        for j in range(len(value_list)):
-            if i == j: continue
-
-            if abs(value_list[i] - value_list[j]) < offset:
-                if j not in to_remove_list:
-                    to_remove_list.append(j)
-
-    removed_count = 0
-
-    for i in to_remove_list:
-        del value_list[i - removed_count]
-        removed_count += 1
+    i = 0
+    while i < len(value_list) - 1:
+        if value_list[i+1] - value_list[i] < offset:
+            value_list.pop(i+1)
+        else:
+            i += 1
 
     return value_list
 
