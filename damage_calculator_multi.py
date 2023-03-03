@@ -14,17 +14,17 @@ import matplotlib.pyplot as plt
 ROUNDS = 500000
 
 CHARACTER_EXAMPLE = {
-    "name"                  : "20 barb / 7 wm / 3 rog",
+    "name"                    : "20 barb / 7 wm / 3 rog",
 
-    "ab"                    : 48,
-    "base_apr"              : 4,
-    "dual_wielding"         : False,
-    "extra_attack"          : 2, # haste, thundering rage etc.
-    "str_mod"               : 14,
-    "overwhelming_critical" : False,
-    "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
+    "ab"                      : 48,
+    "base_apr"                : 4,
+    "dual_wielding"           : False,
+    "extra_attack"            : 2, # haste, thundering rage etc.
+    "str_mod"                 : 14,
+    "overwhelming_critical"   : False,
+    "is_monk"                 : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
 
-    "weapon"                : {
+    "weapon"                  : {
         "name"                : "M. Damask Rapier",
         "damage"              : "1d6",
         "damage_bonus"        : 6 + 6,
