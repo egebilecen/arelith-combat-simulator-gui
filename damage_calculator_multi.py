@@ -1,6 +1,5 @@
 # Download required libraries by running commands below:
 # pip install matplotlib
-# pip install numpy
 
 from random import randint
 from math   import floor
