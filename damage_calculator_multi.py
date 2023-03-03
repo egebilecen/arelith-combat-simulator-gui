@@ -134,8 +134,8 @@ def get_weapon_other_damage(character, is_crit=False):
 
     for dmg_bonus in character["weapon"]["other_damage_bonus"]:
         roll_amount = 1
-        if is_crit and dmg_bonus["no_crit"] != False: roll_amount = character["weapon"]["crit_multiplier"]
-        
+        if is_crit and dmg_bonus["no_crit"] == False: roll_amount = character["weapon"]["crit_multiplier"]
+
         other_dmg = dmg_bonus.copy()
         
         dmg = d(str(dmg_bonus["damage"])+"d1" if isinstance(dmg_bonus["damage"], int) else dmg_bonus["damage"], roll_amount)
@@ -433,7 +433,7 @@ draw_multiple_result_plot([
         "ab"                    : 48,
         "base_apr"              : 4,
         "dual_wielding"         : False,
-        "extra_attack"          : 2, # haste, etc
+        "extra_attack"          : 2, # haste, thundering rage etc.
         "str_mod"               : 14,
         "overwhelming_critical" : False,
         "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
@@ -457,7 +457,7 @@ draw_multiple_result_plot([
         "ab"                    : 50,
         "base_apr"              : 4 + 6,
         "dual_wielding"         : False,
-        "extra_attack"          : 1, # haste, etc
+        "extra_attack"          : 1, # haste, thundering rage etc.
         "str_mod"               : 14,
         "overwhelming_critical" : False,
         "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
