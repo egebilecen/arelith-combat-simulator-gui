@@ -333,6 +333,7 @@ with open("result.txt", "w") as f:
     f.write(RESULT_STR)
 
 plt.plot(plot_x, plot_y, marker = "o")
+plt.grid()
 
 plt.xlabel("Target AC")
 plt.ylabel("Avarage Damage Per Round")
