@@ -372,7 +372,7 @@ def save_result_details(result):
     print_f("WEAPON CRITICAL HIT MULTIPLIER", str(character["weapon"]["crit_multiplier"]))
     print_f("WEAPON OTHER DAMAGE BONUSES", "")
     for dmg_bonus in character["weapon"]["other_damage_bonus"]:
-        print_f("    * "+dmg_bonus["name"].upper(), str(dmg_bonus["damage"]))
+        print_f("    * "+dmg_bonus["name"].upper(), str(dmg_bonus["damage"]) + (" (CAN'T CRIT)" if dmg_bonus["no_crit"] else ""))
     print_f("WEAPON MASSIVE CRITICAL", "No" if character["weapon"]["massive_crit"] is None else str(character["weapon"]["massive_crit"]))
     print_f()
     print_f("CHARACTER AB", str(character["ab"]))
