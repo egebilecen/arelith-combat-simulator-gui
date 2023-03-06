@@ -353,6 +353,7 @@ def draw_single_result_plot(result):
     PLOT_IS_DRAWING = False
 
 def draw_multiple_result_plot(result_list):
+    global ROUNDS
     global PLOT_Y_LIST
     global PLOT_IS_DRAWING
 
