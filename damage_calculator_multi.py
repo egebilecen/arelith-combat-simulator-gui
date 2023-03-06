@@ -4,6 +4,7 @@
 from random import randint
 from math   import floor
 from itertools import cycle
+from textwrap import wrap
 import unicodedata
 import re
 import os
@@ -49,10 +50,13 @@ TARGET = {
     "physical_damage_reduction": 0
 }
 
-PLOT_Y_LIST      = []
-PLOT_LINES       = ["-","--","-.",":"]
-PLOT_LINE_CYCLER = cycle(PLOT_LINES)
-PLOT_IS_DRAWING  = False
+PLOT_Y_STEP_SIZE            = 7
+PLOT_LEGEND_AREA_SIZE       = 0.65
+PLOT_LEGEND_WORD_WRAP_WIDTH = 20
+PLOT_Y_LIST                 = []
+PLOT_LINES                  = ["-","--","-.",":"]
+PLOT_LINE_CYCLER            = cycle(PLOT_LINES)
+PLOT_IS_DRAWING             = False
 
 RESULT_STR = ""
 RESULT_OUTPUT_DIR = "./result/"
@@ -297,7 +301,7 @@ def simulate(character):
 
     return ret_val
 
-def remove_values_within_offset(value_list, offset = 5.5):
+def remove_values_within_offset(value_list, offset = PLOT_Y_STEP_SIZE):
     value_list.sort()
 
     i = 0
@@ -312,6 +316,7 @@ def remove_values_within_offset(value_list, offset = 5.5):
 def draw_plot(result):
     global PLOT_IS_DRAWING
     global PLOT_Y_LIST
+    global PLOT_LEGEND_WORD_WRAP_WIDTH
     
     character = result[0]
 
@@ -326,8 +331,9 @@ def draw_plot(result):
 
     PLOT_Y_LIST.extend(y)
 
-    plt.plot(x, y, linestyle=next(PLOT_LINE_CYCLER), marker = "o", markersize=4, label = character["name"] + " (AB: "+str(character["ab"])+" "+str(character["weapon"]["threat_range"])+"-20 x"+str(character["weapon"]["crit_multiplier"])+")")
-    plt.legend()
+    legend_text = character["name"] + " (AB: "+str(character["ab"])+" "+str(character["weapon"]["threat_range"])+"-20 x"+str(character["weapon"]["crit_multiplier"])+")"
+    plt.plot(x, y, linestyle=next(PLOT_LINE_CYCLER), marker = "o", markersize=4, label = "\n".join(wrap(legend_text, PLOT_LEGEND_WORD_WRAP_WIDTH)))
+    plt.legend(bbox_to_anchor=(1.04, 1), borderaxespad=0)
     
     if not PLOT_IS_DRAWING:
         plt.grid()
@@ -358,6 +364,7 @@ def draw_single_result_plot(result):
 
 def draw_multiple_result_plot(result_list):
     global ROUNDS
+    global PLOT_LEGEND_AREA_SIZE
     global PLOT_Y_LIST
     global PLOT_IS_DRAWING
 
@@ -366,7 +373,8 @@ def draw_multiple_result_plot(result_list):
     
     plt.title("Simulation of " + str(ROUNDS) + " rounds")
     plt.yticks(remove_values_within_offset(PLOT_Y_LIST))
-    plt.savefig(RESULT_OUTPUT_DIR+"result.png")
+    plt.subplots_adjust(right=PLOT_LEGEND_AREA_SIZE)
+    plt.savefig(RESULT_OUTPUT_DIR+"result.png", dpi=300)
     plt.close()
 
     PLOT_IS_DRAWING = False
