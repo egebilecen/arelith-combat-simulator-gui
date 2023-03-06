@@ -22,6 +22,7 @@ CHARACTER_EXAMPLE = {
     "extra_attack"            : 2, # haste, thundering rage etc.
     "str_mod"                 : 14,
     "overwhelming_critical"   : False,
+    "bane_of_enemies"         : False,
     "is_monk"                 : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
 
     "weapon"                  : {
@@ -126,6 +127,9 @@ def get_weapon_damage(character, is_crit=False, is_offhand_attack=False):
         weapon_dmg_bonus += character["str_mod"]
 
     ret_val = d(character["weapon"]["damage"], roll_amount) + (weapon_dmg_bonus * roll_amount)
+
+    if character["bane_of_enemies"]:
+        ret_val += d("2d6", roll_amount)
 
     return ret_val
 
@@ -390,6 +394,7 @@ def save_result_details(result):
     print_f("CHARACTER STR MOD", str(character["str_mod"]))
     print_f("CHARACTER IS MONK", str("Yes" if character["is_monk"] else "No"))
     print_f("CHARACTER OVERWHELMING CRITICAL", str("Yes" if character["overwhelming_critical"] else "No"))
+    print_f("CHARACTER BANE OF ENEMIES", str("Yes" if character["bane_of_enemies"] else "No"))
     print_f()
     print_f("TARGET DEFENSIVE ESSENCE", str(TARGET["defensive_essence"]))
     print_f("TARGET CONCEALMENT", str(TARGET["concealment"])+"% ({0:.2f}% w/ blind fight)".format(apply_blind_fight(TARGET["concealment"])))
