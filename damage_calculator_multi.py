@@ -322,7 +322,7 @@ def draw_plot(result):
 
     PLOT_Y_LIST.extend(y)
 
-    plt.plot(x, y, linestyle=next(PLOT_LINE_CYCLER), marker = "o", markersize=5, label = character["name"] + " (AB: "+str(character["ab"])+")")
+    plt.plot(x, y, linestyle=next(PLOT_LINE_CYCLER), marker = "o", markersize=4, label = character["name"] + " (AB: "+str(character["ab"])+" "+str(character["weapon"]["threat_range"])+"-20 x"+str(character["weapon"]["crit_multiplier"])+")")
     plt.legend()
     
     if not PLOT_IS_DRAWING:
@@ -337,6 +337,7 @@ def draw_plot(result):
     #     plt.text(a, b, str("{0:.2f}".format(b)))
 
 def draw_single_result_plot(result):
+    global ROUNDS
     global PLOT_Y_LIST
     global PLOT_IS_DRAWING
 
@@ -344,6 +345,7 @@ def draw_single_result_plot(result):
 
     draw_plot(result)
 
+    plt.title("Simulation of " + str(ROUNDS) + " rounds")
     plt.yticks(remove_values_within_offset(PLOT_Y_LIST))
     plt.savefig(RESULT_OUTPUT_DIR+slugify(character["name"])+".png")
     plt.close()
@@ -357,6 +359,7 @@ def draw_multiple_result_plot(result_list):
     for result in result_list:
         draw_plot(result)
     
+    plt.title("Simulation of " + str(ROUNDS) + " rounds")
     plt.yticks(remove_values_within_offset(PLOT_Y_LIST))
     plt.savefig(RESULT_OUTPUT_DIR+"result.png")
     plt.close()
