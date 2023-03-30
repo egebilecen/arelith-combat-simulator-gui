@@ -41,7 +41,7 @@ CHARACTER_EXAMPLE = {
 }
 
 TARGET = {
-    "ac_list"           : [40, 45, 50, 55, 60, 65, 70],
+    "ac_list"           : [30, 35, 40, 45, 50, 55, 60, 65, 70],
     "defensive_essence" : 5,  # if resistable is TRUE in other_damage_bonus elements, it will be reduced by this amount.
     "concealment"       : 50, # calculation will be done as assuming attacker has blind fight.
     "epic_dodge"        : False,
@@ -53,6 +53,7 @@ TARGET = {
 PLOT_Y_STEP_SIZE            = 7
 PLOT_LEGEND_AREA_SIZE       = 0.65
 PLOT_LEGEND_WORD_WRAP_WIDTH = 20
+PLOT_X_LIST                 = []
 PLOT_Y_LIST                 = []
 PLOT_LINES                  = ["-","--","-.",":"]
 PLOT_LINE_CYCLER            = cycle(PLOT_LINES)
@@ -315,6 +316,7 @@ def remove_values_within_offset(value_list, offset = PLOT_Y_STEP_SIZE):
 
 def draw_plot(result):
     global PLOT_IS_DRAWING
+    global PLOT_X_LIST
     global PLOT_Y_LIST
     global PLOT_LEGEND_WORD_WRAP_WIDTH
     
@@ -329,6 +331,7 @@ def draw_plot(result):
         x.append(target_ac)
         y.append(avg_damage)
 
+    PLOT_X_LIST.extend(x)
     PLOT_Y_LIST.extend(y)
 
     legend_text = character["name"] + " (AB: "+str(character["ab"])+" "+str(character["weapon"]["threat_range"])+"-20 x"+str(character["weapon"]["crit_multiplier"])+")"
@@ -348,6 +351,7 @@ def draw_plot(result):
 
 def draw_single_result_plot(result):
     global ROUNDS
+    global PLOT_X_LIST
     global PLOT_Y_LIST
     global PLOT_IS_DRAWING
 
@@ -356,6 +360,7 @@ def draw_single_result_plot(result):
     draw_plot(result)
 
     plt.title("Simulation of " + str(ROUNDS) + " rounds")
+    plt.xticks(PLOT_X_LIST)
     plt.yticks(remove_values_within_offset(PLOT_Y_LIST))
     plt.savefig(RESULT_OUTPUT_DIR+slugify(character["name"])+".png")
     plt.close()
@@ -365,6 +370,7 @@ def draw_single_result_plot(result):
 def draw_multiple_result_plot(result_list):
     global ROUNDS
     global PLOT_LEGEND_AREA_SIZE
+    global PLOT_X_LIST
     global PLOT_Y_LIST
     global PLOT_IS_DRAWING
 
@@ -372,6 +378,7 @@ def draw_multiple_result_plot(result_list):
         draw_plot(result)
     
     plt.title("Simulation of " + str(ROUNDS) + " rounds")
+    plt.xticks(PLOT_X_LIST)
     plt.yticks(remove_values_within_offset(PLOT_Y_LIST))
     plt.subplots_adjust(right=PLOT_LEGEND_AREA_SIZE)
     plt.savefig(RESULT_OUTPUT_DIR+"result.png", dpi=300)
