@@ -1,11 +1,12 @@
 import { appWindow, LogicalSize } from "@tauri-apps/api/window";
 import { useState } from "react";
 import { ConfigProvider, theme } from "antd";
-import { Layout, Typography, Button, Flex } from "antd";
+import { Layout, Button, Flex } from "antd";
 import { yellow } from "@ant-design/colors";
+import LeftMenu from "./LeftMenu";
+import MainPage from "./Pages/Main";
 
 const { Header, Sider, Content } = Layout;
-const { Text, Link } = Typography;
 
 const windowConfig = {
     innerPadding: 10 * 4,
@@ -13,10 +14,14 @@ const windowConfig = {
 };
 
 const lightTheme = {
-    token: {
-        colorBgContainer: "#fff",
+    token: {},
+    components: {
+        Header: {
+            custom: {
+                backgroundColor: "#fff",
+            },
+        },
     },
-    components: {},
 };
 
 const darkTheme = {
@@ -33,11 +38,11 @@ const headerStyle = {
 
 const contentStyle = {
     height: 350,
-    backgroundColor: "transparent",
+    padding: 10,
 };
 
 const siderStyle = {
-    backgroundColor: "transparent",
+    borderBottomLeftRadius: windowConfig.borderRadius,
 };
 
 await appWindow.setSize(
@@ -78,7 +83,8 @@ function App() {
                     data-tauri-drag-region
                     style={{
                         ...headerStyle,
-                        background: getTheme().token.colorBgContainer,
+                        background:
+                            getTheme().components.Header.custom.backgroundColor,
                         padding: "0 8px 0 19px",
                         position: "relative",
                         borderTopLeftRadius: windowConfig.borderRadius,
@@ -99,15 +105,17 @@ function App() {
                         }}
                         data-tauri-drag-region
                     >
-                        <ConfigProvider theme={{
-                            components: {
-                                Button: {
-                                    colorPrimary: yellow.primary,
-                                    colorPrimaryActive: yellow[6],
-                                    colorPrimaryHover: yellow[4]
-                                }
-                            }
-                        }}>
+                        <ConfigProvider
+                            theme={{
+                                components: {
+                                    Button: {
+                                        colorPrimary: yellow.primary,
+                                        colorPrimaryActive: yellow[6],
+                                        colorPrimaryHover: yellow[4],
+                                    },
+                                },
+                            }}
+                        >
                             <Button
                                 type="primary"
                                 shape="circle"
@@ -138,8 +146,12 @@ function App() {
                         borderRadius: windowConfig.borderRadius,
                     }}
                 >
-                    <Sider style={{ ...siderStyle }}>Sider</Sider>
-                    <Content style={{ ...contentStyle }}>Content</Content>
+                    <Sider style={{ ...siderStyle }} theme="light">
+                        <LeftMenu />
+                    </Sider>
+                    <Content style={{ ...contentStyle }}>
+                        <MainPage />
+                    </Content>
                 </Layout>
             </Layout>
         </ConfigProvider>

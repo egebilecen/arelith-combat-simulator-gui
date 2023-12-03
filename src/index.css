@@ -7,7 +7,11 @@ body {
     padding: 0;
     margin: 0;
     overflow: hidden;
-    border-radius: 12px;
     background-color: transparent;
     padding: 10px;
+}
+
+#root {
+    border: 1px solid #eee;
+    border-radius: 6px;
 }
