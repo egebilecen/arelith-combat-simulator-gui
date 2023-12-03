@@ -2,10 +2,15 @@ import { appWindow, LogicalSize } from "@tauri-apps/api/window";
 import { useState } from "react";
 import { ConfigProvider, theme } from "antd";
 import { Layout, Typography, Button, Flex } from "antd";
-import { green } from "@ant-design/colors";
+import { yellow } from "@ant-design/colors";
 
 const { Header, Sider, Content } = Layout;
 const { Text, Link } = Typography;
+
+const windowConfig = {
+    innerPadding: 10 * 4,
+    borderRadius: 6,
+};
 
 const lightTheme = {
     token: {
@@ -36,7 +41,10 @@ const siderStyle = {
 };
 
 await appWindow.setSize(
-    new LogicalSize(800, headerStyle.height + contentStyle.height + 5)
+    new LogicalSize(
+        800 + windowConfig.innerPadding,
+        headerStyle.height + contentStyle.height + windowConfig.innerPadding
+    )
 );
 
 function App() {
@@ -60,13 +68,21 @@ function App() {
         <ConfigProvider
             theme={currentTheme === "light" ? lightTheme : darkTheme}
         >
-            <Layout>
+            <Layout
+                style={{
+                    borderRadius: windowConfig.borderRadius,
+                    boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.20)",
+                }}
+            >
                 <Header
                     data-tauri-drag-region
                     style={{
                         ...headerStyle,
                         background: getTheme().token.colorBgContainer,
                         padding: "0 8px 0 19px",
+                        position: "relative",
+                        borderTopLeftRadius: windowConfig.borderRadius,
+                        borderTopRightRadius: windowConfig.borderRadius,
                     }}
                 >
                     <span data-tauri-drag-region style={{ fontWeight: 600 }}>
@@ -83,17 +99,26 @@ function App() {
                         }}
                         data-tauri-drag-region
                     >
-                        <Button
-                            type="primary"
-                            shape="circle"
-                            style={{
-                                minWidth: 16,
-                                width: 16,
-                                height: 16,
-                                backgroundColor: green.primary,
-                            }}
-                            onClick={windowMinimize}
-                        />
+                        <ConfigProvider theme={{
+                            components: {
+                                Button: {
+                                    colorPrimary: yellow.primary,
+                                    colorPrimaryActive: yellow[6],
+                                    colorPrimaryHover: yellow[4]
+                                }
+                            }
+                        }}>
+                            <Button
+                                type="primary"
+                                shape="circle"
+                                style={{
+                                    minWidth: 16,
+                                    width: 16,
+                                    height: 16,
+                                }}
+                                onClick={windowMinimize}
+                            />
+                        </ConfigProvider>
 
                         <Button
                             type="primary"
@@ -108,7 +133,11 @@ function App() {
                         />
                     </Flex>
                 </Header>
-                <Layout>
+                <Layout
+                    style={{
+                        borderRadius: windowConfig.borderRadius,
+                    }}
+                >
                     <Sider style={{ ...siderStyle }}>Sider</Sider>
                     <Content style={{ ...contentStyle }}>Content</Content>
                 </Layout>

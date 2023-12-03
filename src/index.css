@@ -8,6 +8,6 @@ body {
     margin: 0;
     overflow: hidden;
     border-radius: 12px;
-    border: 1px solid #eee;
-    
+    background-color: transparent;
+    padding: 10px;
 }
