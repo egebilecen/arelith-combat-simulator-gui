@@ -459,17 +459,18 @@ if not os.path.exists(RESULT_OUTPUT_DIR):
 
 draw_multiple_result_plot([
     simulate({
-        "name"                  : "20 barb / 7 wm / 3 rog",
-
-        "ab"                    : 48,
-        "base_apr"              : 4,
-        "dual_wielding"         : False, # base apr will be increased by 2 automatically.
-        "extra_attack"          : 2, # haste, thundering rage etc.
-        "str_mod"               : 14,
-        "overwhelming_critical" : False,
-        "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
-
-        "weapon"                : {
+        "name"                    : "20 barb / 7 wm / 3 rog",
+    
+        "ab"                      : 48,
+        "base_apr"                : 4,
+        "dual_wielding"           : False, # base apr will be increased by 2 automatically.
+        "extra_attack"            : 2, # haste, thundering rage etc.
+        "str_mod"                 : 14,
+        "overwhelming_critical"   : False,
+        "bane_of_enemies"         : False,
+        "is_monk"                 : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
+    
+        "weapon"                  : {
             "name"                : "M. Damask Rapier",
             "damage"              : "1d6",
             "damage_bonus"        : 6 + 6,
@@ -478,102 +479,6 @@ draw_multiple_result_plot([
             "other_damage_bonus"  : [
                 {"name" : "Sonic", "damage" : "1d6", "resistable" : True, "no_crit" : False},
                 {"name" : "Positive", "damage" : "1d6", "resistable" : True, "no_crit" : False},
-            ],
-            "massive_crit"        : "2d6"
-        }
-    }),
-    simulate({
-        "name"                  : "20 f / 5 wm / 5 lm",
-
-        "ab"                    : 50,
-        "base_apr"              : 4,
-        "dual_wielding"         : False, # base apr will be increased by 2 automatically.
-        "extra_attack"          : 1, # haste, thundering rage etc.
-        "str_mod"               : 14,
-        "overwhelming_critical" : False,
-        "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
-
-        "weapon"                : {
-            "name"                : "Knight Commander's Sabre",
-            "damage"              : "1d6",
-            "damage_bonus"        : 2 + 4 + 6,
-            "threat_range"        : 12,
-            "crit_multiplier"     : 3,
-            "other_damage_bonus"  : [
-                {"name" : "Sonic", "damage" : "1d6", "resistable" : True, "no_crit" : False},
-                {"name" : "Positive", "damage" : "1d6", "resistable" : True, "no_crit" : False},
-            ],
-            "massive_crit"        : "2d4"
-        }
-    }),
-    simulate({
-        "name"                  : "25 f / 5 wm",
-
-        "ab"                    : 51,
-        "base_apr"              : 4,
-        "dual_wielding"         : False, # base apr will be increased by 2 automatically.
-        "extra_attack"          : 1, # haste, thundering rage etc.
-        "str_mod"               : 16,
-        "overwhelming_critical" : False,
-        "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
-
-        "weapon"                : {
-            "name"                : "M. Damask Scimitar",
-            "damage"              : "1d6",
-            "damage_bonus"        : 6 + 6 + 2,
-            "threat_range"        : 12,
-            "crit_multiplier"     : 3,
-            "other_damage_bonus"  : [
-                {"name" : "Sonic", "damage" : "1d6", "resistable" : True, "no_crit" : False},
-                {"name" : "Positive", "damage" : "1d6", "resistable" : True, "no_crit" : False}
-            ],
-            "massive_crit"        : None
-        }
-    }),
-    simulate({
-        "name"                  : "8 f / 17 vigi / 5 wm",
-
-        "ab"                    : 50,
-        "base_apr"              : 4,
-        "dual_wielding"         : False, # base apr will be increased by 2 automatically.
-        "extra_attack"          : 1, # haste, thundering rage etc.
-        "str_mod"               : 15,
-        "overwhelming_critical" : False,
-        "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
-
-        "weapon"                : {
-            "name"                : "M. Damask Scimitar",
-            "damage"              : "1d6",
-            "damage_bonus"        : 6 + 6 + 2,
-            "threat_range"        : 12,
-            "crit_multiplier"     : 3,
-            "other_damage_bonus"  : [
-                {"name" : "Sonic", "damage" : "1d6", "resistable" : True, "no_crit" : False},
-                {"name" : "Positive", "damage" : "1d6", "resistable" : True, "no_crit" : False}
-            ],
-            "massive_crit"        : None
-        }
-    }),
-    simulate({
-        "name"                  : "10 sw / 15 f / 5 wm",
-
-        "ab"                    : 50,
-        "base_apr"              : 4,
-        "dual_wielding"         : False, # base apr will be increased by 2 automatically.
-        "extra_attack"          : 1, # haste, thundering rage etc.
-        "str_mod"               : 16,
-        "overwhelming_critical" : False,
-        "is_monk"               : False, # If character is monk, AB penalty is set to -3 from -5 for consecutively attacks.
-
-        "weapon"                : {
-            "name"                : "M. Damask Scimitar",
-            "damage"              : "1d6",
-            "damage_bonus"        : 6 + 6 + 7,
-            "threat_range"        : 12,
-            "crit_multiplier"     : 3,
-            "other_damage_bonus"  : [
-                {"name" : "Sonic", "damage" : "1d6", "resistable" : True, "no_crit" : False},
-                {"name" : "Positive", "damage" : "1d6", "resistable" : True, "no_crit" : False}
             ],
             "massive_crit"        : None
         }
