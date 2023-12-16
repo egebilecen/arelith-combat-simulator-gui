@@ -1,65 +1,72 @@
 import { useState } from "react";
 import { Menu } from "antd";
 import {
-    AppstoreOutlined,
-    MailOutlined,
-    SettingOutlined,
+    CalculatorOutlined,
+    TeamOutlined,
+    UnorderedListOutlined,
+    InfoCircleOutlined,
 } from "@ant-design/icons";
+import HomePage from "./Pages/Home";
+import AboutPage from "./Pages/About";
 
-function getItem(label, key, icon, children, type) {
+function menuItem(label, key, icon, page, children, type) {
     return {
         key,
         icon,
         children,
         label,
         type,
+        page,
     };
 }
 
 const items = [
-    getItem("Navigation One", "sub1", <MailOutlined />, [
-        getItem("Option 1", "1"),
-        getItem("Option 2", "2"),
-        getItem("Option 3", "3"),
-        getItem("Option 4", "4"),
-    ]),
-    getItem("Navigation Two", "sub2", <AppstoreOutlined />, [
-        getItem("Option 5", "5"),
-        getItem("Option 6", "6"),
-        getItem("Submenu", "sub3", null, [
-            getItem("Option 7", "7"),
-            getItem("Option 8", "8"),
-        ]),
-    ]),
-    getItem("Navigation Three", "sub4", <SettingOutlined />, [
-        getItem("Option 9", "9"),
-        getItem("Option 10", "10"),
-        getItem("Option 11", "11"),
-        getItem("Option 12", "12"),
-    ]),
+    menuItem("Calculator", "calculator", <CalculatorOutlined />, <HomePage />),
+    menuItem("Build List", "build_list", <TeamOutlined />),
+    menuItem("Weapon List", "weapon_list", <UnorderedListOutlined />),
+    menuItem("About", "about", <InfoCircleOutlined />, <AboutPage />),
+
+    // menuItem("Navigation Two", "sub2", <AppstoreOutlined />, [
+    //     menuItem("Option 5", "5"),
+    //     menuItem("Option 6", "6"),
+    //     menuItem("Submenu", "sub3", null, [
+    //         menuItem("Option 7", "7"),
+    //         menuItem("Option 8", "8"),
+    //     ]),
+    // ]),
 ];
 
-// submenu keys of first level
-const rootSubmenuKeys = ["sub1", "sub2", "sub4"];
-
-function LeftMenu() {
-    const [openKeys, setOpenKeys] = useState(["sub1"]);
+function LeftMenu({ theme, setCurrentPage }) {
+    const [openKeys, setOpenKeys] = useState(["calculator"]);
 
     const onOpenChange = (keys) => {
-        const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-        if (latestOpenKey && rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+        const openMenuKey = keys.find((key) => openKeys.indexOf(key) === -1);
+
+        if (
+            openMenuKey &&
+            items.filter((item) => item.key === openMenuKey).length === 0
+        ) {
             setOpenKeys(keys);
         } else {
-            setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+            setOpenKeys(openMenuKey ? [openMenuKey] : []);
         }
+    };
+
+    const onSelect = (e) => {
+        const page = e.item.props.page;
+
+        if (page !== undefined) setCurrentPage(page);
     };
 
     return (
         <Menu
             mode="inline"
+            items={items}
             openKeys={openKeys}
             onOpenChange={onOpenChange}
-            items={items}
+            onSelect={onSelect}
+            defaultSelectedKeys={[items[0].key]}
+            theme={theme}
         />
     );
 }
