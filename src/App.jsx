@@ -4,7 +4,7 @@ import { ConfigProvider, theme } from "antd";
 import { Layout, Button, Flex } from "antd";
 import { yellow } from "@ant-design/colors";
 import LeftMenu from "./LeftMenu";
-import MainPage from "./Pages/Main";
+import HomePage from "./Pages/Home";
 
 const { Header, Sider, Content } = Layout;
 
@@ -37,7 +37,7 @@ const headerStyle = {
 };
 
 const contentStyle = {
-    height: 350,
+    height: 450,
     padding: 10,
 };
 
@@ -54,6 +54,7 @@ await appWindow.setSize(
 
 function App() {
     const [currentTheme, setCurrentTheme] = useState("light");
+    const [currentPage, setCurrentPage] = useState(<HomePage />);
 
     const getTheme = () => {
         if (currentTheme == "dark") return darkTheme;
@@ -146,11 +147,11 @@ function App() {
                         borderRadius: windowConfig.borderRadius,
                     }}
                 >
-                    <Sider style={{ ...siderStyle }} theme="light">
-                        <LeftMenu />
+                    <Sider style={{ ...siderStyle }} theme={currentTheme}>
+                        <LeftMenu theme={currentTheme} setCurrentPage={setCurrentPage} />
                     </Sider>
                     <Content style={{ ...contentStyle }}>
-                        <MainPage />
+                        {currentPage}
                     </Content>
                 </Layout>
             </Layout>
