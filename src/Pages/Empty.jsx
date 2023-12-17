@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Card } from "antd";
+import PageContainer from "../Sections/PageContainer";
 
 function EmptyPage() {
     return (
-        <Card>
+        <PageContainer>
             <span>Empty page</span>
-        </Card>
+        </PageContainer>
     );
 }
 

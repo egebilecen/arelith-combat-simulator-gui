@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Card, Typography } from "antd";
+import PageContainer from "../Sections/PageContainer";
 
 const { Text } = Typography;
 
 function AboutPage() {
     return (
-        <Card>
+        <PageContainer>
             <img
                 style={{
                     display: "block",
@@ -27,7 +28,7 @@ function AboutPage() {
                 this application or find it useful, please consider leaving a
                 star ⭐ to the repo.
             </Text>
-        </Card>
+        </PageContainer>
     );
 }
 

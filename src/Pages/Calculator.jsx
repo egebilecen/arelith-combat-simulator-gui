@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Card } from "antd";
+import PageContainer from "../Sections/PageContainer";
 
 function CalculatorPage() {
     return (
-        <Card>
+        <PageContainer>
             <span style={{ display: "block" }}>Card content</span>
             <span style={{ display: "block" }}>Card content</span>
             <span style={{ display: "block" }}>Card content</span>
-        </Card>
+        </PageContainer>
     );
 }
 
