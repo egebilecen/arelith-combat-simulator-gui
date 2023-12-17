@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card } from "antd";
 import PageContainer from "../Sections/PageContainer";
 
 function CalculatorPage() {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Spin } from "antd";
+import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import PageContainer from "../Sections/PageContainer";
 
