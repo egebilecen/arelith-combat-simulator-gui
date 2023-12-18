@@ -24,7 +24,7 @@ function AboutPage() {
                 </a>
                 . It simulates each round in combat, then summarizes the
                 statistics. It is open-source software, which can be found{" "}
-                <a href="https://github.com/egebilecen">here</a>. If you like
+                <a href="https://github.com/egebilecen/nwn-damage-calculator/tree/ui" target="_blank">here</a>. If you like
                 this application or find it useful, please consider leaving a
                 star ⭐ to the repo.
             </Text>
