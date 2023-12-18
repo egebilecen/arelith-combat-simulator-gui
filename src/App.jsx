@@ -1,4 +1,10 @@
-import { appWindow, LogicalSize } from "@tauri-apps/api/window";
+import {
+    appWindow,
+    LogicalSize,
+    currentMonitor,
+    PhysicalPosition,
+} from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api";
 import { useState } from "react";
 import { ConfigProvider, theme } from "antd";
 import { Layout, Button, Flex } from "antd";
@@ -51,6 +57,19 @@ await appWindow.setSize(
         headerStyle.height + contentStyle.height + windowConfig.innerPadding
     )
 );
+
+if (await invoke("is_debug")) {
+    const monitor = await currentMonitor();
+
+    if (monitor !== null) {
+        let size = await appWindow.innerSize();
+        await appWindow.setPosition(
+            new PhysicalPosition(monitor.size.width - size.width + 10, -10)
+        );
+    }
+} else {
+    document.addEventListener("contextmenu", (event) => event.preventDefault());
+}
 
 function App() {
     const [currentTheme, setCurrentTheme] = useState("light");
@@ -148,11 +167,12 @@ function App() {
                     }}
                 >
                     <Sider style={{ ...siderStyle }} theme={currentTheme}>
-                        <LeftMenu theme={currentTheme} setCurrentPage={setCurrentPage} />
+                        <LeftMenu
+                            theme={currentTheme}
+                            setCurrentPage={setCurrentPage}
+                        />
                     </Sider>
-                    <Content style={{ ...contentStyle }}>
-                        {currentPage}
-                    </Content>
+                    <Content style={{ ...contentStyle }}>{currentPage}</Content>
                 </Layout>
             </Layout>
         </ConfigProvider>
