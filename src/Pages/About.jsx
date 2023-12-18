@@ -11,10 +11,10 @@ function AboutPage() {
                 style={{
                     display: "block",
                     margin: "auto",
-                    width: 100,
-                    height: 100,
+                    width: 125,
+                    marginBottom: 10
                 }}
-                src="/EB_logo.png"
+                src="EB_logo2.png"
                 alt="Logo"
             />
             <Text style={{ display: "block", textAlign: "justify" }}>
