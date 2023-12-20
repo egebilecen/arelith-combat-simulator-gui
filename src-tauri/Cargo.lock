@@ -64,12 +64,22 @@ checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
 name = "app"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
+ "arelith_combat_simulator",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
+]
+
+[[package]]
+name = "arelith_combat_simulator"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee1e8d089647b2f1f9cc4a90b1b6a2dee87cdb9e9af6b10751558c64432a808e"
+dependencies = [
+ "rand 0.8.5",
 ]
 
 [[package]]
