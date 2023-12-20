@@ -75,11 +75,12 @@ dependencies = [
 
 [[package]]
 name = "arelith_combat_simulator"
-version = "1.0.0"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee1e8d089647b2f1f9cc4a90b1b6a2dee87cdb9e9af6b10751558c64432a808e"
+checksum = "1f4f259b5f61be99f30d19d1c7966712b630fec95c66674c9b3eb56db3668969"
 dependencies = [
  "rand 0.8.5",
+ "serde",
 ]
 
 [[package]]

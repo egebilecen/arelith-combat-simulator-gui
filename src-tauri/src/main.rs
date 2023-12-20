@@ -6,7 +6,7 @@ use commands::*;
 
 fn main() {
     let tauri_builder =
-        tauri::Builder::default().invoke_handler(tauri::generate_handler![is_debug]);
+        tauri::Builder::default().invoke_handler(tauri::generate_handler![is_debug, test]);
 
     #[cfg(debug_assertions)]
     let tauri_builder = tauri_builder.setup(|app| {
