@@ -2,9 +2,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod commands;
+mod db;
+
 use commands::*;
+use db::*;
 
 fn main() {
+    init_db();
+
     let tauri_builder =
         tauri::Builder::default().invoke_handler(tauri::generate_handler![is_debug, test]);
 
