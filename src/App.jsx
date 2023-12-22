@@ -75,6 +75,8 @@ function App() {
     const [currentTheme, setCurrentTheme] = useState("light");
     const [currentPage, setCurrentPage] = useState(<HomePage />);
 
+    const headerButtonSize = 14;
+
     const getTheme = () => {
         if (currentTheme == "dark") return darkTheme;
 
@@ -140,9 +142,9 @@ function App() {
                                 type="primary"
                                 shape="circle"
                                 style={{
-                                    minWidth: 16,
-                                    width: 16,
-                                    height: 16,
+                                    minWidth: headerButtonSize,
+                                    width: headerButtonSize,
+                                    height: headerButtonSize,
                                 }}
                                 onClick={windowMinimize}
                             />
@@ -153,9 +155,9 @@ function App() {
                             shape="circle"
                             danger
                             style={{
-                                minWidth: 16,
-                                width: 16,
-                                height: 16,
+                                minWidth: headerButtonSize,
+                                width: headerButtonSize,
+                                height: headerButtonSize,
                             }}
                             onClick={windowClose}
                         />
