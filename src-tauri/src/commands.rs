@@ -1,4 +1,4 @@
-use arelith::{character::Character, feat::feat_db::get_feat};
+use crate::db;
 
 #[tauri::command]
 pub fn is_debug() -> bool {
@@ -10,16 +10,16 @@ pub fn is_debug() -> bool {
 }
 
 #[tauri::command]
-pub fn test() -> Option<Character> {
-    #[cfg(not(debug_assertions))]
-    return None;
+pub fn get_rows(table: &str) -> db::QueryResult<Vec<db::RowData>> {
+    db::get_rows(&table)
+}
 
-    Some(
-        Character::builder()
-            .name("Test Character".into())
-            .ab(48)
-            .ac(60)
-            .feats(vec![get_feat("Blind Fight"), get_feat("Dual Wielding")])
-            .build(),
-    )
+#[tauri::command]
+pub fn insert_row(table: &str, name: &str, json: &str) -> db::QueryResult<usize> {
+    db::insert_row(table, name, json)
+}
+
+#[tauri::command]
+pub fn delete_row(table: &str, id: i32) -> db::QueryResult<usize> {
+    db::delete_row(table, id)
 }

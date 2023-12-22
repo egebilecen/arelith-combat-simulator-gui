@@ -5,13 +5,12 @@ mod commands;
 mod db;
 
 use commands::*;
-use db::*;
 
 fn main() {
-    init_db();
+    db::init_db();
 
     let tauri_builder =
-        tauri::Builder::default().invoke_handler(tauri::generate_handler![is_debug, test]);
+        tauri::Builder::default().invoke_handler(tauri::generate_handler![is_debug, get_rows, insert_row, delete_row]);
 
     #[cfg(debug_assertions)]
     let tauri_builder = tauri_builder.setup(|app| {
