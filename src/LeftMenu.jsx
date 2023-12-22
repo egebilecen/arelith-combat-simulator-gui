@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import HomePage from "./Pages/Home";
 import AboutPage from "./Pages/About";
-import BuildListPage from "./Pages/BuildList";
+import CharacterListPage from "./Pages/CharacterList";
 
 function menuItem(label, key, icon, page, children, type) {
     return {
@@ -23,7 +23,7 @@ function menuItem(label, key, icon, page, children, type) {
 
 const items = [
     menuItem("Calculator", "calculator", <CalculatorOutlined />, <HomePage />),
-    menuItem("Build List", "build_list", <TeamOutlined />, <BuildListPage />),
+    menuItem("Character List", "character_list", <TeamOutlined />, <CharacterListPage />),
     menuItem("Weapon List", "weapon_list", <UnorderedListOutlined />),
     menuItem("About", "about", <InfoCircleOutlined />, <AboutPage />),
 

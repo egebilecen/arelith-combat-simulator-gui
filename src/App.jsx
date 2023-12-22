@@ -43,7 +43,7 @@ const headerStyle = {
 };
 
 const contentStyle = {
-    height: 450,
+    height: 460,
     padding: 10,
 };
 
@@ -164,8 +164,10 @@ function App() {
                     </Flex>
                 </Header>
                 <Layout
+                    id="app-body"
                     style={{
                         borderRadius: windowConfig.borderRadius,
+                        position: "relative"
                     }}
                 >
                     <Sider style={{ ...siderStyle }} theme={currentTheme}>
