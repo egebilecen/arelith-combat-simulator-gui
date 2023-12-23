@@ -9,8 +9,14 @@ use commands::*;
 fn main() {
     db::init_db();
 
-    let tauri_builder =
-        tauri::Builder::default().invoke_handler(tauri::generate_handler![is_debug, get_rows, insert_row, delete_row]);
+    let tauri_builder = tauri::Builder::default().invoke_handler(tauri::generate_handler![
+        is_debug,
+        get_rows,
+        insert_row,
+        delete_row,
+        get_base_weapons,
+        test
+    ]);
 
     #[cfg(debug_assertions)]
     let tauri_builder = tauri_builder.setup(|app| {

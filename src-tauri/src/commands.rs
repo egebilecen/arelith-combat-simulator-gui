@@ -1,4 +1,9 @@
 use crate::db;
+use arelith::{item::{
+    weapon_db::{get_weapon_base, get_weapon_base_list},
+    Damage, DamageType, ItemProperty, Weapon, WeaponBase,
+}, dice::Dice};
+use std::collections::HashMap;
 
 #[tauri::command]
 pub fn is_debug() -> bool {
@@ -22,4 +27,23 @@ pub fn insert_row(table: &str, name: &str, json: &str) -> db::QueryResult<usize>
 #[tauri::command]
 pub fn delete_row(table: &str, id: i32) -> db::QueryResult<usize> {
     db::delete_row(table, id)
+}
+
+#[tauri::command]
+pub fn get_base_weapons() -> HashMap<String, WeaponBase> {
+    get_weapon_base_list()
+}
+
+#[tauri::command]
+pub fn test() -> Weapon {
+    Weapon::new(
+        "Weapon Name".into(),
+        get_weapon_base("Bastard Sword"),
+        vec![ItemProperty::DamageBonus(Damage::new(
+            DamageType::Bludgeoning,
+            Dice::from("1d6"),
+            true,
+            true,
+        ))],
+    )
 }
