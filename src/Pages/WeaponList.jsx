@@ -5,7 +5,6 @@ import {
     Flex,
     Result,
     List,
-    Drawer,
     Row,
     Col,
     Form,
@@ -15,6 +14,7 @@ import {
     Select,
 } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
 
@@ -122,11 +122,8 @@ function WeaponListPage() {
 
                 <Drawer
                     title="Create a new weapon"
-                    width={window.innerWidth / 1.75}
                     open={isWeaponFormOpen}
                     closable={false}
-                    getContainer={document.querySelector("#app-body")}
-                    rootStyle={{ position: "absolute" }}
                     extra={
                         <Space>
                             <Button onClick={handleWeaponFormCancelClick}>
