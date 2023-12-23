@@ -259,14 +259,15 @@ function CharacterListPage() {
                                         },
                                     ]}
                                 >
-                                    <Select placeholder="Select a weapon.">
-                                        <Option
-                                            title=""
-                                            value="temp"
-                                        >
-                                            <b>Temp</b> — Scimitar (12-20 x3)
-                                        </Option>
-                                    </Select>
+                                    <Select
+                                        placeholder="Select a weapon."
+                                        options={[
+                                            {
+                                                label: "Temp — Scimitar (12-20 x3)",
+                                                value: "Temp",
+                                            },
+                                        ]}
+                                    />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -285,32 +286,29 @@ function CharacterListPage() {
                                         mode="multiple"
                                         placeholder="(Optional) Select any features."
                                         defaultValue={["Blind Fight"]}
-                                    >
-                                        <Option
-                                            title="Feat"
-                                            value="Blind Fight"
-                                        >
-                                            Blind Fight
-                                        </Option>
-                                        <Option
-                                            title="Feat — Considers the user as having all dual-wielding feats."
-                                            value="Dual Wielding"
-                                        >
-                                            Dual Wielding
-                                        </Option>
-                                        <Option
-                                            title="Feat"
-                                            value="Bane of Enemies"
-                                        >
-                                            Bane of Enemies
-                                        </Option>
-                                        <Option
-                                            title="Feat"
-                                            value="Overwhelming Critical"
-                                        >
-                                            Overwhelming Critical
-                                        </Option>
-                                    </Select>
+                                        options={[
+                                            {
+                                                label: "Blind Fight",
+                                                value: "Blind Fight",
+                                                title: "Feat",
+                                            },
+                                            {
+                                                label: "Dual Wielding",
+                                                value: "Dual Wielding",
+                                                title: "Feat — Considers the user as having all dual-wielding feats.",
+                                            },
+                                            {
+                                                label: "Bane of Enemies",
+                                                value: "Bane of Enemies",
+                                                title: "Feat",
+                                            },
+                                            {
+                                                label: "Overwhelming Critical",
+                                                value: "Overwhelming Critical",
+                                                title: "Feat",
+                                            },
+                                        ]}
+                                    />
                                 </Form.Item>
                             </Col>
                         </Row>
