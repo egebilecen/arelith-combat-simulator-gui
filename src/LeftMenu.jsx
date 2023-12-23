@@ -9,6 +9,7 @@ import {
 import HomePage from "./Pages/Home";
 import AboutPage from "./Pages/About";
 import CharacterListPage from "./Pages/CharacterList";
+import WeaponListPage from "./Pages/WeaponList";
 
 function menuItem(label, key, icon, page, children, type) {
     return {
@@ -23,8 +24,18 @@ function menuItem(label, key, icon, page, children, type) {
 
 const items = [
     menuItem("Calculator", "calculator", <CalculatorOutlined />, <HomePage />),
-    menuItem("Character List", "character_list", <TeamOutlined />, <CharacterListPage />),
-    menuItem("Weapon List", "weapon_list", <UnorderedListOutlined />),
+    menuItem(
+        "Character List",
+        "character_list",
+        <TeamOutlined />,
+        <CharacterListPage />
+    ),
+    menuItem(
+        "Weapon List",
+        "weapon_list",
+        <UnorderedListOutlined />,
+        <WeaponListPage />
+    ),
     menuItem("About", "about", <InfoCircleOutlined />, <AboutPage />),
 
     // menuItem("Navigation Two", "sub2", <AppstoreOutlined />, [
