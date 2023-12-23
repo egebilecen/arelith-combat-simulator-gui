@@ -102,12 +102,12 @@ function CharacterListPage() {
                         display: isErrorOccured ? "block" : "none",
                     }}
                     status="warning"
-                    title="An error occured while getting the character list."
-                    subTitle={"Error — " + errorText}
+                    title="An error occured"
+                    subTitle={errorText}
                 />
 
                 <List
-                    style={{ display: isLoading ? "none" : "block" }}
+                    style={{ display: isLoading || isErrorOccured ? "none" : "block" }}
                     itemLayout="horizontal"
                     dataSource={characterList}
                     renderItem={(item) => (
@@ -260,7 +260,7 @@ function CharacterListPage() {
                                     ]}
                                 >
                                     <Select
-                                        placeholder="Select a weapon."
+                                        placeholder="Select a weapon"
                                         options={[
                                             {
                                                 label: "Temp — Scimitar (12-20 x3)",
@@ -284,7 +284,7 @@ function CharacterListPage() {
                                 >
                                     <Select
                                         mode="multiple"
-                                        placeholder="(Optional) Select any features."
+                                        placeholder="Select any features (Optional)"
                                         defaultValue={["Blind Fight"]}
                                         options={[
                                             {
