@@ -1,8 +1,12 @@
 use crate::db;
-use arelith::{item::{
-    weapon_db::{get_weapon_base, get_weapon_base_list},
-    Damage, DamageType, ItemProperty, Weapon, WeaponBase,
-}, dice::Dice};
+use arelith::{
+    dice::Dice,
+    item::{
+        weapon_db::{get_weapon_base, get_weapon_base_list},
+        Damage, DamageType, ItemProperty, Weapon, WeaponBase,
+    },
+};
+use serde_json::Value;
 use std::collections::HashMap;
 
 #[tauri::command]
@@ -32,6 +36,85 @@ pub fn delete_row(table: &str, id: i32) -> db::QueryResult<usize> {
 #[tauri::command]
 pub fn get_base_weapons() -> HashMap<String, WeaponBase> {
     get_weapon_base_list()
+}
+
+#[tauri::command]
+pub fn create_weapon(
+    name: &str,
+    base_weapon: &str,
+    threat_range: i32,
+    crit_mult: i32,
+    item_props: Vec<Value>,
+) -> Weapon {
+    fn to_damage_type(dmg_type: &str) -> DamageType {
+        match dmg_type.to_lowercase().as_str() {
+            "slashing" => DamageType::Slashing,
+            "piercing" => DamageType::Piercing,
+            "bludgeoning" => DamageType::Bludgeoning,
+            "magical" => DamageType::Magical,
+            "acid" => DamageType::Acid,
+            "cold" => DamageType::Cold,
+            "divine" => DamageType::Divine,
+            "electrical" => DamageType::Electrical,
+            "fire" => DamageType::Fire,
+            "negative" => DamageType::Negative,
+            "positive" => DamageType::Positive,
+            "sonic" => DamageType::Sonic,
+            "entropy" => DamageType::Entropy,
+            "force" => DamageType::Force,
+            "psychic" => DamageType::Psychic,
+            "poison" => DamageType::Poison,
+            _ => DamageType::Slashing,
+        }
+    }
+
+    let mut iprops = vec![
+        ItemProperty::ThreatRangeOverride(threat_range),
+        ItemProperty::CriticalMultiplierOverride(crit_mult),
+    ];
+
+    for obj in item_props.iter() {
+        let type_ = obj["type"].as_str().unwrap();
+
+        match type_ {
+            "Damage Bonus" => {
+                let val = obj["value"].as_str().unwrap();
+                let dmg_type = obj["extra"].as_str().unwrap();
+                let dmg_props: Vec<&str> = obj["dmg_props"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|e| e.as_str().unwrap())
+                    .collect();
+
+                let can_crit = dmg_props.contains(&"can_crit");
+                let is_resistable = dmg_props.contains(&"resistable");
+
+                iprops.push(ItemProperty::DamageBonus(Damage::new(
+                    to_damage_type(dmg_type),
+                    if val.contains("d") {
+                        Dice::from(val)
+                    } else {
+                        Dice::from(val.parse::<i32>().unwrap())
+                    },
+                    is_resistable,
+                    can_crit,
+                )));
+            }
+            "Massive Critical" => {
+                let val = obj["value"].as_str().unwrap();
+
+                iprops.push(ItemProperty::MassiveCrit(if val.contains("d") {
+                    Dice::from(val)
+                } else {
+                    Dice::from(val.parse::<i32>().unwrap())
+                }));
+            }
+            _ => (),
+        }
+    }
+
+    Weapon::new(name.to_string(), get_weapon_base(base_weapon), iprops)
 }
 
 #[tauri::command]
