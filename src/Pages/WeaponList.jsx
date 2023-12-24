@@ -646,9 +646,6 @@ function WeaponListPage() {
                                                             </Col>
                                                             <Col span={6}>
                                                                 <Tooltip
-                                                                    trigger={[
-                                                                        "focus",
-                                                                    ]}
                                                                     placement="bottomLeft"
                                                                     title="Either a number such as 4 or a dice such as 1d6."
                                                                 >
@@ -736,10 +733,6 @@ function WeaponListPage() {
                                                                         </Checkbox>
 
                                                                         <Tooltip
-                                                                            trigger={[
-                                                                                "hover",
-                                                                                "click",
-                                                                            ]}
                                                                             title="If damage is resistable, it will be affected from damage resistance, damage reduction, and damage immunity."
                                                                         >
                                                                             <Checkbox value="resistable">
