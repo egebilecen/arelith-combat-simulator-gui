@@ -17,6 +17,7 @@ import {
     Divider,
     message,
     Typography,
+    Popconfirm,
 } from "antd";
 import {
     LoadingOutlined,
@@ -63,14 +64,32 @@ function WeaponListPage() {
     const [showExtraField, setShowExtraField] = useState({});
     const [isCreatingWeapon, setIsCreatingWeapon] = useState(false);
 
+    const showMessage = (type, text) => {
+        messageApi.open({
+            type: type,
+            content: text,
+            style: {
+                marginTop: 64,
+            },
+        });
+    };
+
     const handleNewWeaponClick = (e) => {
         setIsWeaponFormOpen(true);
     };
 
-    const handleWeaponFormCancelClick = (e) => {
-        weaponForm.resetFields();
-        setShowExtraField({});
-        setIsWeaponFormOpen(false);
+    const handleDeleteWeaponClick = async (id) => {
+        let res = await invoke("delete_row", {
+            table: "weapons",
+            id: id,
+        });
+
+        if (res.success) {
+            showMessage("success", "The weapon is successfully deleted.");
+            setWeaponList(weaponList.filter((e, i) => e.id !== id));
+        } else {
+            showMessage("error", "An error occured while deleting the weapon.");
+        }
     };
 
     const handleWeaponFormValueChange = (e) => {
@@ -97,6 +116,12 @@ function WeaponListPage() {
         }
     };
 
+    const handleWeaponFormCancelClick = (e) => {
+        weaponForm.resetFields();
+        setShowExtraField({});
+        setIsWeaponFormOpen(false);
+    };
+
     const handleWeaponFormCreateClick = async (e) => {
         setIsCreatingWeapon(true);
 
@@ -119,28 +144,22 @@ function WeaponListPage() {
             });
 
             if (res.success) {
-                messageApi.open({
-                    type: "success",
-                    content: "The weapon is successfully created.",
-                    style: {
-                        marginTop: 64,
-                    },
-                });
+                showMessage("success", "The weapon is successfully created.");
             } else {
-                messageApi.open({
-                    type: "error",
-                    content: "An error occured while creating the weapon.",
-                    style: {
-                        marginTop: 64,
-                    },
-                });
+                showMessage(
+                    "error",
+                    "An error occured while creating the weapon."
+                );
             }
 
-            setWeaponList([...weaponList, {
-                id: res.result,
-                name: weapon.name,
-                json: weaponJsonStr
-            }]);
+            setWeaponList([
+                ...weaponList,
+                {
+                    id: res.result,
+                    name: weapon.name,
+                    json: weaponJsonStr,
+                },
+            ]);
 
             setIsCreatingWeapon(false);
             handleWeaponFormCancelClick();
@@ -314,10 +333,28 @@ function WeaponListPage() {
                                 }
                             });
 
+                        if (properties.length < 1)
+                            properties.push("This weapon has no properties.");
+
+                        const actions = [
+                            <Popconfirm
+                                title="Warning"
+                                description="Are you sure to delete this weapon?"
+                                onConfirm={() =>
+                                    handleDeleteWeaponClick(item.id)
+                                }
+                                okText="Yes"
+                                cancelText="No"
+                                placement="left"
+                            >
+                                <a>delete</a>
+                            </Popconfirm>,
+                        ];
+
                         return (
                             <List.Item
                                 key={"weapon-" + item.id}
-                                actions={[<a key="delete">delete</a>]}
+                                actions={actions}
                             >
                                 <List.Item.Meta
                                     title={item.name}
@@ -329,14 +366,18 @@ function WeaponListPage() {
                                                 <Text>{item.id}</Text>
                                             </Col> */}
                                             <Col span={6}>
-                                                <Text strong underline>Base Weapon</Text>
+                                                <Text strong underline>
+                                                    Base Weapon
+                                                </Text>
                                                 <br />
                                                 <Text>
                                                     {item.obj.base.name}
                                                 </Text>
                                             </Col>
                                             <Col span={6}>
-                                                <Text strong underline>Threat Range</Text>
+                                                <Text strong underline>
+                                                    Threat Range
+                                                </Text>
                                                 <br />
                                                 <Text>
                                                     {threatRange == 20
@@ -354,7 +395,9 @@ function WeaponListPage() {
                                                 <Text>x{critMultiplier}</Text>
                                             </Col>
                                             <Col span={6}>
-                                                <Text strong underline>Properties</Text>
+                                                <Text strong underline>
+                                                    Properties
+                                                </Text>
                                                 <br />
                                                 <Tooltip
                                                     title={
