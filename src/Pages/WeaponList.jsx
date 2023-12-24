@@ -712,7 +712,18 @@ function WeaponListPage() {
                                             <Form.Item>
                                                 <Button
                                                     type="dashed"
-                                                    onClick={() => add()}
+                                                    onClick={() => {
+                                                        add();
+
+                                                        setInterval(() => {
+                                                            let refElem =
+                                                                document.querySelector(
+                                                                    ".ant-drawer-body"
+                                                                );
+                                                            refElem.scrollTop =
+                                                                refElem.scrollHeight;
+                                                        }, 0);
+                                                    }}
                                                     block
                                                     icon={<PlusOutlined />}
                                                 >
