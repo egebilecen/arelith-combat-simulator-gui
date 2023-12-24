@@ -90,13 +90,17 @@ pub fn get_rows(table: &str) -> QueryResult<Vec<RowData>> {
     };
 }
 
-pub fn insert_row(table: &str, name: &str, json: &str) -> QueryResult<usize> {
+pub fn insert_row(table: &str, name: &str, json: &str) -> QueryResult<i64> {
     let conn = get_db();
 
-    let res = conn.execute(
-        format!("INSERT INTO {} (name, json) VALUES (?, ?)", table).as_str(),
-        [name, json],
-    );
+    let mut query = match conn.prepare(format!("INSERT INTO {} (name, json) VALUES (?, ?)", table).as_str()) {
+        Ok(res) => res,
+        Err(err) => {
+            return error_result(err);
+        }
+    };
+
+    let res = query.insert([name, json]);
 
     if res.is_ok() {
         return QueryResult {

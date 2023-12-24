@@ -24,7 +24,7 @@ pub fn get_rows(table: &str) -> db::QueryResult<Vec<db::RowData>> {
 }
 
 #[tauri::command]
-pub fn insert_row(table: &str, name: &str, json: &str) -> db::QueryResult<usize> {
+pub fn insert_row(table: &str, name: &str, json: &str) -> db::QueryResult<i64> {
     db::insert_row(table, name, json)
 }
 
