@@ -47,6 +47,8 @@ const headerStyle = {
 const contentStyle = {
     height: 460,
     padding: 10,
+    overflowX: "hidden",
+    overflowY: "auto",
 };
 
 const siderStyle = {
@@ -191,7 +193,7 @@ function App() {
                             Version {appVersion}
                         </Text>
                     </Sider>
-                    <Content style={{ ...contentStyle }}>{currentPage}</Content>
+                    <Content id="app-body-content" style={{ ...contentStyle }}>{currentPage}</Content>
                 </Layout>
             </Layout>
         </ConfigProvider>
