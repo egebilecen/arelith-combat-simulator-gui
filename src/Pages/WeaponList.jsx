@@ -766,7 +766,7 @@ function WeaponListPage() {
                                                     onClick={() => {
                                                         add();
 
-                                                        setInterval(() => {
+                                                        setTimeout(() => {
                                                             let refElem =
                                                                 document.querySelector(
                                                                     ".ant-drawer-body"
