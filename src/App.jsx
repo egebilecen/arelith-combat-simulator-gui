@@ -1,18 +1,20 @@
+import { invoke } from "@tauri-apps/api";
 import {
     appWindow,
     LogicalSize,
     currentMonitor,
     PhysicalPosition,
 } from "@tauri-apps/api/window";
-import { invoke } from "@tauri-apps/api";
+import { getVersion } from "@tauri-apps/api/app";
 import { useState } from "react";
 import { ConfigProvider, theme } from "antd";
-import { Layout, Button, Flex } from "antd";
+import { Layout, Button, Flex, Typography } from "antd";
 import { yellow } from "@ant-design/colors";
 import LeftMenu from "./LeftMenu";
 import HomePage from "./Pages/Home";
 
 const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 
 const windowConfig = {
     innerPadding: 10 * 4,
@@ -50,6 +52,8 @@ const contentStyle = {
 const siderStyle = {
     borderBottomLeftRadius: windowConfig.borderRadius,
 };
+
+const appVersion = await getVersion();
 
 await appWindow.setSize(
     new LogicalSize(
@@ -167,7 +171,7 @@ function App() {
                     id="app-body"
                     style={{
                         borderRadius: windowConfig.borderRadius,
-                        position: "relative"
+                        position: "relative",
                     }}
                 >
                     <Sider style={{ ...siderStyle }} theme={currentTheme}>
@@ -175,6 +179,17 @@ function App() {
                             theme={currentTheme}
                             setCurrentPage={setCurrentPage}
                         />
+
+                        <Text
+                            type="secondary"
+                            style={{
+                                position: "absolute",
+                                bottom: 5,
+                                left: 10,
+                            }}
+                        >
+                            Version {appVersion}
+                        </Text>
                     </Sider>
                     <Content style={{ ...contentStyle }}>{currentPage}</Content>
                 </Layout>
