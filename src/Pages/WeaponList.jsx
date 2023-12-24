@@ -110,10 +110,12 @@ function WeaponListPage() {
                 itemProps: values.item_properties || [],
             });
 
+            let weaponJsonStr = JSON.stringify(weapon);
+
             let res = await invoke("insert_row", {
                 table: "weapons",
                 name: weapon.name,
-                json: JSON.stringify(weapon),
+                json: weaponJsonStr,
             });
 
             if (res.success) {
@@ -133,6 +135,12 @@ function WeaponListPage() {
                     },
                 });
             }
+
+            setWeaponList([...weaponList, {
+                id: res.result,
+                name: weapon.name,
+                json: weaponJsonStr
+            }]);
 
             setIsCreatingWeapon(false);
             handleWeaponFormCancelClick();
