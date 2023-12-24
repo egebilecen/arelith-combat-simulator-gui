@@ -12,6 +12,7 @@ import {
     Input,
     Divider,
     Select,
+    Tooltip,
 } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
@@ -23,6 +24,7 @@ function CharacterListPage() {
     const [isErrorOccured, setIsErrorOccured] = useState(false);
     const [errorText, setErrorText] = useState("Unknown");
     const [characterList, setCharacterList] = useState([]);
+    const [weaponList, setWeaponList] = useState([]);
     const [isCharacterFormOpen, setIsCharacterFormOpen] = useState(false);
     const [characterForm] = Form.useForm();
 
@@ -47,18 +49,35 @@ function CharacterListPage() {
     // Load characters
     useEffect(() => {
         async function func() {
-            let res = await invoke("get_rows", { table: "characters" });
+            const [rows, weapon_rows] = await Promise.all([
+                invoke("get_rows", { table: "characters" }),
+                invoke("get_rows", { table: "weapons" }),
+            ]);
+
             setIsLoading(false);
 
-            console.log(res);
-
-            if (!res.success) {
-                setErrorText(res.msg);
+            if (!rows.success) {
+                setErrorText(rows.msg);
                 setIsErrorOccured(true);
                 return;
             }
 
-            setCharacterList(res.result);
+            if (!weapon_rows.success) {
+                setErrorText(weapon_rows.msg);
+                setIsErrorOccured(true);
+                return;
+            } else {
+                weapon_rows.result.map((weapon_row) => {
+                    weapon_row.obj = JSON.parse(weapon_row.json);
+                });
+            }
+
+            console.log(rows);
+            console.log(weapon_rows);
+            console.log("---");
+
+            setCharacterList(rows.result);
+            setWeaponList(weapon_rows.result);
         }
 
         func();
@@ -107,7 +126,9 @@ function CharacterListPage() {
                 />
 
                 <List
-                    style={{ display: isLoading || isErrorOccured ? "none" : "block" }}
+                    style={{
+                        display: isLoading || isErrorOccured ? "none" : "block",
+                    }}
                     itemLayout="horizontal"
                     dataSource={characterList}
                     renderItem={(item) => (
@@ -155,7 +176,7 @@ function CharacterListPage() {
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="23 f / 7 wm" />
+                                    <Input placeholder="23 F / 7 WM" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -228,7 +249,12 @@ function CharacterListPage() {
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="4" />
+                                    <Tooltip
+                                        title="APR gained from level / class progression."
+                                        placement="bottomLeft"
+                                    >
+                                        <Input placeholder="4" />
+                                    </Tooltip>
                                 </Form.Item>
                             </Col>
                             <Col span={5}>
@@ -243,7 +269,12 @@ function CharacterListPage() {
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="0" />
+                                    <Tooltip
+                                        title="APR gained from effects such as haste, thundering rage, etc. Do NOT add the dual-wielding APR bonus here. Just select dual-wielding from the features below."
+                                        placement="bottomLeft"
+                                    >
+                                        <Input placeholder="0" />
+                                    </Tooltip>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -261,12 +292,36 @@ function CharacterListPage() {
                                 >
                                     <Select
                                         placeholder="Select a weapon"
-                                        options={[
-                                            {
-                                                label: "Temp — Scimitar (12-20 x3)",
-                                                value: "Temp",
-                                            },
-                                        ]}
+                                        options={weaponList.map(
+                                            (weapon_row) => {
+                                                const threat_range =
+                                                    weapon_row.obj
+                                                        .item_properties[0]
+                                                        .ThreatRangeOverride;
+                                                const crit_mult =
+                                                    weapon_row.obj
+                                                        .item_properties[1]
+                                                        .CriticalMultiplierOverride;
+
+                                                return {
+                                                    key:
+                                                        "weapon-" +
+                                                        weapon_row.id,
+                                                    label:
+                                                        weapon_row.name +
+                                                        " (" +
+                                                        (threat_range < 20
+                                                            ? threat_range +
+                                                              "-20"
+                                                            : "20") +
+                                                        ", x" +
+                                                        crit_mult +
+                                                        ")",
+                                                    value: weapon_row.id,
+                                                    title: "",
+                                                };
+                                            }
+                                        )}
                                     />
                                 </Form.Item>
                             </Col>
@@ -281,11 +336,11 @@ function CharacterListPage() {
                                             required: false,
                                         },
                                     ]}
+                                    initialValue={["Blind Fight"]}
                                 >
                                     <Select
                                         mode="multiple"
                                         placeholder="Select any features (Optional)"
-                                        defaultValue={["Blind Fight"]}
                                         options={[
                                             {
                                                 label: "Blind Fight",
