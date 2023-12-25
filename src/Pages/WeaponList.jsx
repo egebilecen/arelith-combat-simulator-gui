@@ -26,8 +26,9 @@ import {
 } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
+import ItemPropStats from "../Components/ItemPropStats";
 import { invoke } from "@tauri-apps/api";
-import { getDiceStr, getWeaponBaseStr } from "../Util/weapon";
+import { getWeaponBaseStr } from "../Util/weapon";
 
 const { Text } = Typography;
 
@@ -275,51 +276,6 @@ function WeaponListPage() {
                             (e) => e.CriticalMultiplierOverride !== undefined
                         ).CriticalMultiplierOverride;
 
-                        const properties = item.obj.item_properties
-                            .slice(2)
-                            .map((obj) => {
-                                const key = Object.keys(obj)[0];
-                                let iprop = obj[key];
-
-                                if (key == "DamageBonus") {
-                                    return (
-                                        <Text
-                                            style={{
-                                                color: "white",
-                                            }}
-                                        >
-                                            <Text
-                                                style={{ color: "inherit" }}
-                                                strong
-                                            >
-                                                Damage Bonus:
-                                            </Text>{" "}
-                                            {getDiceStr(iprop.amount, true)}{" "}
-                                            {iprop.type_}
-                                        </Text>
-                                    );
-                                } else if (key == "MassiveCrit") {
-                                    return (
-                                        <Text
-                                            style={{
-                                                color: "white",
-                                            }}
-                                        >
-                                            <Text
-                                                style={{ color: "inherit" }}
-                                                strong
-                                            >
-                                                Massive Critical:
-                                            </Text>{" "}
-                                            {getDiceStr(iprop, true)}
-                                        </Text>
-                                    );
-                                }
-                            });
-
-                        if (properties.length < 1)
-                            properties.push("This weapon has no properties.");
-
                         const actions = [
                             <Popconfirm
                                 title="Warning"
@@ -385,27 +341,12 @@ function WeaponListPage() {
                                                 <br />
                                                 <Tooltip
                                                     title={
-                                                        <Row
-                                                            style={{
-                                                                maxWidth: 200,
-                                                            }}
-                                                        >
-                                                            {properties.map(
-                                                                (prop, i) => (
-                                                                    <Col
-                                                                        key={
-                                                                            "props-" +
-                                                                            i
-                                                                        }
-                                                                        span={
-                                                                            24
-                                                                        }
-                                                                    >
-                                                                        {prop}
-                                                                    </Col>
-                                                                )
-                                                            )}
-                                                        </Row>
+                                                        <ItemPropStats
+                                                            itemProperties={
+                                                                item.obj
+                                                                    .item_properties
+                                                            }
+                                                        />
                                                     }
                                                 >
                                                     <Typography.Link
