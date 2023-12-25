@@ -11,6 +11,7 @@ fn main() {
 
     let tauri_builder = tauri::Builder::default().invoke_handler(tauri::generate_handler![
         is_debug,
+        get_row_by_id,
         get_rows,
         insert_row,
         delete_row,

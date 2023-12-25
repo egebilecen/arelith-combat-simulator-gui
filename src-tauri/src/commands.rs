@@ -19,6 +19,11 @@ pub fn is_debug() -> bool {
 }
 
 #[tauri::command]
+pub fn get_row_by_id(table: &str, id: i32) -> db::QueryResult<db::RowData> {
+    db::get_row_by_id(table, id)
+}
+
+#[tauri::command]
 pub fn get_rows(table: &str) -> db::QueryResult<Vec<db::RowData>> {
     db::get_rows(&table)
 }

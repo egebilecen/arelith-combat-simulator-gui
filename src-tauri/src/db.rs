@@ -3,7 +3,7 @@ use serde::Serialize;
 
 pub static DB_FILE: &'static str = "./db";
 
-#[derive(Serialize)]
+#[derive(Serialize, Default)]
 pub struct RowData {
     pub id: i32,
     pub name: String,
@@ -60,6 +60,36 @@ where
     }
 }
 
+pub fn get_row_by_id(table: &str, id: i32) -> QueryResult<RowData> {
+    let conn = get_db();
+
+    let mut query = match conn.prepare(format!("SELECT * FROM {} WHERE id = ?", table).as_str()) {
+        Ok(res) => res,
+        Err(err) => {
+            return error_result(err);
+        }
+    };
+
+    match query.query_row([id], |row| {
+        Ok(RowData {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            json: row.get(2)?,
+        })
+    }) {
+        Ok(row) => {
+            return QueryResult {
+                success: true,
+                result: row,
+                msg: "".into(),
+            }
+        }
+        Err(err) => {
+            return error_result(err);
+        }
+    }
+}
+
 pub fn get_rows(table: &str) -> QueryResult<Vec<RowData>> {
     let conn = get_db();
 
@@ -93,12 +123,13 @@ pub fn get_rows(table: &str) -> QueryResult<Vec<RowData>> {
 pub fn insert_row(table: &str, name: &str, json: &str) -> QueryResult<i64> {
     let conn = get_db();
 
-    let mut query = match conn.prepare(format!("INSERT INTO {} (name, json) VALUES (?, ?)", table).as_str()) {
-        Ok(res) => res,
-        Err(err) => {
-            return error_result(err);
-        }
-    };
+    let mut query =
+        match conn.prepare(format!("INSERT INTO {} (name, json) VALUES (?, ?)", table).as_str()) {
+            Ok(res) => res,
+            Err(err) => {
+                return error_result(err);
+            }
+        };
 
     let res = query.insert([name, json]);
 
@@ -122,7 +153,7 @@ pub fn delete_row(table: &str, id: i32) -> QueryResult<usize> {
         return QueryResult {
             success: true,
             result: res.unwrap(),
-            msg: "".into()
+            msg: "".into(),
         };
     }
 
