@@ -27,6 +27,7 @@ import {
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
+import { getWeaponBaseStr } from "../Util/weapon";
 
 const { Text } = Typography;
 
@@ -88,7 +89,10 @@ function WeaponListPage() {
             showMessage("success", "The weapon is successfully deleted.");
             setWeaponList(weaponList.filter((e, i) => e.id !== id));
         } else {
-            showMessage("error", "An error occured while deleting the weapon.");
+            showMessage(
+                "error",
+                "An error occured while deleting the weapon: " + res.msg
+            );
         }
     };
 
@@ -148,8 +152,10 @@ function WeaponListPage() {
             } else {
                 showMessage(
                     "error",
-                    "An error occured while creating the weapon."
+                    "An error occured while creating the weapon: " + res.msg
                 );
+                setIsCreatingWeapon(false);
+                return;
             }
 
             setWeaponList([
@@ -196,19 +202,7 @@ function WeaponListPage() {
             const baseWeaponsList = [];
             for (const [key, val] of Object.entries(baseWeapons)) {
                 baseWeaponsList.push({
-                    title:
-                        key +
-                        " (" +
-                        val.damage.rolls +
-                        "d" +
-                        val.damage.faces +
-                        ", " +
-                        (val.threat_range < 20
-                            ? val.threat_range + "-20"
-                            : "20") +
-                        ", x" +
-                        val.crit_multiplier +
-                        ")",
+                    title: getWeaponBaseStr(val),
                     label: key,
                     value: key,
                 });
@@ -732,9 +726,7 @@ function WeaponListPage() {
                                                                             hit
                                                                         </Checkbox>
 
-                                                                        <Tooltip
-                                                                            title="If damage is resistable, it will be affected from damage resistance, damage reduction, and damage immunity."
-                                                                        >
+                                                                        <Tooltip title="If damage is resistable, it will be affected from damage resistance, damage reduction, and damage immunity.">
                                                                             <Checkbox value="resistable">
                                                                                 Resistable
                                                                             </Checkbox>
