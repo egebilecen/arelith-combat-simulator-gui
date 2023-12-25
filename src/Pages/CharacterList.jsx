@@ -10,16 +10,23 @@ import {
     Form,
     Space,
     Input,
-    Divider,
     Select,
     Tooltip,
+    message,
+    InputNumber,
+    Typography,
+    Divider,
 } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
 
+const { Text } = Typography;
+
 function CharacterListPage() {
+    const [messageApi, contextHolder] = message.useMessage();
+
     const [isLoading, setIsLoading] = useState(true);
     const [isErrorOccured, setIsErrorOccured] = useState(false);
     const [errorText, setErrorText] = useState("Unknown");
@@ -27,6 +34,17 @@ function CharacterListPage() {
     const [weaponList, setWeaponList] = useState([]);
     const [isCharacterFormOpen, setIsCharacterFormOpen] = useState(false);
     const [characterForm] = Form.useForm();
+    const [isCreatingCharacter, setIsCreatingCharacter] = useState(false);
+
+    const showMessage = (type, text) => {
+        messageApi.open({
+            type: type,
+            content: text,
+            style: {
+                marginTop: 64,
+            },
+        });
+    };
 
     const handleNewCharacterClick = (e) => {
         setIsCharacterFormOpen(true);
@@ -38,11 +56,74 @@ function CharacterListPage() {
     };
 
     const handleCharacterCreateClick = async (e) => {
+        setIsCreatingCharacter(true);
+
         try {
             const values = await characterForm.validateFields();
-            console.log("Success:", values);
+            const weapon = await invoke("get_row_by_id", {
+                table: "weapons",
+                id: values.weapon_id,
+            });
+
+            if (!weapon.success) {
+                showMessage(
+                    "error",
+                    "An error occured while fetching the selected weapon: " +
+                        weapon.msg
+                );
+                setIsCreatingCharacter(false);
+                return;
+            } else {
+                weapon.result.obj = JSON.parse(weapon.result.json);
+            }
+
+            const character = await invoke("create_character", {
+                name: values.name,
+                size: values.size,
+                ab: values.ab,
+                strength: values.str,
+                baseApr: values.base_apr,
+                extraApr: values.extra_apr,
+                weapon: weapon.result.obj,
+                features: values.features,
+            });
+
+            let characterJsonStr = JSON.stringify(character);
+
+            let res = await invoke("insert_row", {
+                table: "characters",
+                name: character.name,
+                json: characterJsonStr,
+            });
+
+            if (res.success) {
+                showMessage(
+                    "success",
+                    "The character is successfully created."
+                );
+            } else {
+                showMessage(
+                    "error",
+                    "An error occured while creating the character: " + res.msg
+                );
+                setIsCreatingCharacter(false);
+                return;
+            }
+
+            setCharacterList([
+                ...characterList,
+                {
+                    id: res.result,
+                    name: character.name,
+                    json: characterJsonStr,
+                },
+            ]);
+
+            setIsCreatingCharacter(false);
+            handleCharacterFormCancelClick();
         } catch (errorInfo) {
             console.log("Failed:", errorInfo);
+            setIsCreatingCharacter(false);
         }
     };
 
@@ -85,6 +166,7 @@ function CharacterListPage() {
 
     return (
         <>
+            {contextHolder}
             <PageContainer>
                 <Flex
                     justify="end"
@@ -131,14 +213,82 @@ function CharacterListPage() {
                     }}
                     itemLayout="horizontal"
                     dataSource={characterList}
-                    renderItem={(item) => (
-                        <List.Item actions={[<a key="delete">delete</a>]}>
-                            <List.Item.Meta
-                                title="Test Title"
-                                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                            />
-                        </List.Item>
-                    )}
+                    renderItem={(item) => {
+                        item.obj = JSON.parse(item.json);
+                        console.log(item);
+
+                        return (
+                            <List.Item actions={[<a key="delete">delete</a>]}>
+                                <List.Item.Meta
+                                    title={
+                                        <>
+                                            <Text>{item.name}</Text>
+                                            <Divider type="vertical" />
+                                            <Text
+                                                type="secondary"
+                                                style={{
+                                                    fontWeight: "normal",
+                                                }}
+                                            >
+                                                <b>Size:</b> {item.obj.size}
+                                            </Text>
+                                        </>
+                                    }
+                                    description={
+                                        <Row gutter={16}>
+                                            <Col span={2}>
+                                                <Text strong underline>
+                                                    AB
+                                                </Text>
+                                                <br />
+                                                <Text>{item.obj.ab}</Text>
+                                            </Col>
+                                            <Col span={3}>
+                                                <Text strong underline>
+                                                    STR
+                                                </Text>
+                                                <br />
+                                                <Text>
+                                                    {item.obj.abilities.str}
+                                                </Text>
+                                            </Col>
+                                            <Col span={5}>
+                                                <Text strong underline>
+                                                    Base APR
+                                                </Text>
+                                                <br />
+                                                <Text>{item.obj.base_apr}</Text>
+                                            </Col>
+                                            <Col span={5}>
+                                                <Text strong underline>
+                                                    Extra APR
+                                                </Text>
+                                                <br />
+                                                <Text>
+                                                    {item.obj.extra_apr}
+                                                </Text>
+                                            </Col>
+                                            <Col flex="auto">
+                                                <Text strong underline>
+                                                    Weapon
+                                                </Text>
+                                                <br />
+                                                <Tooltip>
+                                                    <Typography.Link
+                                                        style={{
+                                                            cursor: "inherit",
+                                                        }}
+                                                    >
+                                                        {item.obj.weapon.name}
+                                                    </Typography.Link>
+                                                </Tooltip>
+                                            </Col>
+                                        </Row>
+                                    }
+                                />
+                            </List.Item>
+                        );
+                    }}
                 />
 
                 <Drawer
@@ -153,6 +303,7 @@ function CharacterListPage() {
                             <Button
                                 type="primary"
                                 onClick={handleCharacterCreateClick}
+                                loading={isCreatingCharacter}
                             >
                                 Create
                             </Button>
@@ -165,7 +316,7 @@ function CharacterListPage() {
                         requiredMark={false}
                     >
                         <Row gutter={16}>
-                            <Col flex="auto">
+                            <Col span={16}>
                                 <Form.Item
                                     name="name"
                                     label="Name"
@@ -179,6 +330,57 @@ function CharacterListPage() {
                                     <Input placeholder="23 F / 7 WM" />
                                 </Form.Item>
                             </Col>
+                            <Col span={8}>
+                                <Tooltip
+                                    title="Character size will only be used to check if the weapon is held two-handed in order to gain half of the STR modifier as extra damage. Monkey grip is not considered."
+                                    placement="bottomLeft"
+                                >
+                                    <Form.Item
+                                        name="size"
+                                        label="Size"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message:
+                                                    "Please select a size.",
+                                            },
+                                        ]}
+                                        initialValue={"Medium"}
+                                    >
+                                        <Select
+                                            placeholder="Select a size"
+                                            options={[
+                                                {
+                                                    label: "Tiny",
+                                                    value: "Tiny",
+                                                    title: "",
+                                                },
+                                                {
+                                                    label: "Small",
+                                                    value: "Small",
+                                                    title: "",
+                                                },
+                                                {
+                                                    label: "Medium",
+                                                    value: "Medium",
+                                                    title: "",
+                                                },
+                                                {
+                                                    label: "Large",
+                                                    value: "Large",
+                                                    title: "",
+                                                },
+                                                {
+                                                    label: "Huge",
+                                                    value: "Huge",
+                                                    title: "",
+                                                },
+                                            ]}
+                                            title=""
+                                        />
+                                    </Form.Item>
+                                </Tooltip>
+                            </Col>
                         </Row>
                         <Row gutter={16}>
                             <Col span={6}>
@@ -188,14 +390,11 @@ function CharacterListPage() {
                                     rules={[
                                         {
                                             required: true,
-                                            pattern: new RegExp(
-                                                /^[1-9]+([0-9]+)?$/g
-                                            ),
                                             message: "Not valid.",
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="50" />
+                                    <InputNumber placeholder="50" />
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -205,83 +404,62 @@ function CharacterListPage() {
                                     rules={[
                                         {
                                             required: true,
-                                            pattern: new RegExp(
-                                                /^[1-9]+([0-9]+)?$/g
-                                            ),
                                             message: "Not valid.",
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="40" />
+                                    <InputNumber placeholder="40" />
                                 </Form.Item>
                             </Col>
-                            <Col span={2}>
-                                <div
-                                    style={{
-                                        display: "block",
-                                        width: "100%",
-                                        height: "100%",
-                                        paddingTop: 10,
-                                        paddingBottom: 20,
-                                    }}
+                            <Col span={6}>
+                                <Tooltip
+                                    title="APR gained from level / class progression."
+                                    placement="bottomLeft"
                                 >
-                                    <Divider
-                                        type="vertical"
-                                        style={{
-                                            height: "50%",
-                                            width: 5,
-                                            height: "100%",
-                                        }}
-                                    />
-                                </div>
-                            </Col>
-                            <Col span={5}>
-                                <Form.Item
-                                    name="base_apr"
-                                    label="Base APR"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            pattern: new RegExp(
-                                                /^[1-9]+([0-9]+)?$/g
-                                            ),
-                                            message: "Not valid.",
-                                        },
-                                    ]}
-                                >
-                                    <Tooltip
-                                        title="APR gained from level / class progression."
-                                        placement="bottomLeft"
+                                    <Form.Item
+                                        name="base_apr"
+                                        label="Base APR"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                pattern: new RegExp(
+                                                    /^[1-9]+(?:[0-9]+)?$/g
+                                                ),
+                                                message: "Not valid.",
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder="4" />
-                                    </Tooltip>
-                                </Form.Item>
+                                        <InputNumber placeholder="4" min={1} />
+                                    </Form.Item>
+                                </Tooltip>
                             </Col>
-                            <Col span={5}>
-                                <Form.Item
-                                    name="extra_apr"
-                                    label="Extra APR"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            pattern: new RegExp(/^[0-9]+$/g),
-                                            message: "Not valid.",
-                                        },
-                                    ]}
+                            <Col span={6}>
+                                <Tooltip
+                                    title="APR gained from effects such as haste, thundering rage, etc. Do NOT add the dual-wielding APR bonus here. Just select dual-wielding from the features below."
+                                    placement="bottomLeft"
                                 >
-                                    <Tooltip
-                                        title="APR gained from effects such as haste, thundering rage, etc. Do NOT add the dual-wielding APR bonus here. Just select dual-wielding from the features below."
-                                        placement="bottomLeft"
+                                    <Form.Item
+                                        name="extra_apr"
+                                        label="Extra APR"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                pattern: new RegExp(
+                                                    /^[0-9]+$/g
+                                                ),
+                                                message: "Not valid.",
+                                            },
+                                        ]}
                                     >
-                                        <Input placeholder="0" />
-                                    </Tooltip>
-                                </Form.Item>
+                                        <InputNumber placeholder="0" min={0} />
+                                    </Form.Item>
+                                </Tooltip>
                             </Col>
                         </Row>
                         <Row>
                             <Col span={24}>
                                 <Form.Item
-                                    name="weapon"
+                                    name="weapon_id"
                                     label="Weapon"
                                     rules={[
                                         {

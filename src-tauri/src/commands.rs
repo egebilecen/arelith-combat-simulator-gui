@@ -1,10 +1,13 @@
 use crate::db;
 use arelith::{
+    character::{AbilityList, Character},
     dice::Dice,
+    feat::feat_db::get_feat,
     item::{
         weapon_db::{get_weapon_base, get_weapon_base_list},
         Damage, DamageType, ItemProperty, Weapon, WeaponBase,
     },
+    size::SizeCategory,
 };
 use serde_json::Value;
 use std::collections::HashMap;
@@ -41,6 +44,44 @@ pub fn delete_row(table: &str, id: i32) -> db::QueryResult<usize> {
 #[tauri::command]
 pub fn get_base_weapons() -> HashMap<String, WeaponBase> {
     get_weapon_base_list()
+}
+
+#[tauri::command]
+pub fn create_character(
+    name: &str,
+    size: &str,
+    ab: i32,
+    strength: i32,
+    base_apr: i32,
+    extra_apr: i32,
+    weapon: Weapon,
+    features: Vec<&str>,
+) -> Character {
+    fn to_size(size: &str) -> SizeCategory {
+        match size.to_lowercase().as_str() {
+            "tiny" => SizeCategory::Tiny,
+            "small" => SizeCategory::Small,
+            "medium" => SizeCategory::Medium,
+            "large" => SizeCategory::Large,
+            "huge" => SizeCategory::Huge,
+            _ => SizeCategory::Medium,
+        }
+    }
+
+    let mut builder = Character::builder()
+        .name(name.to_string())
+        .size(to_size(size))
+        .abilities(AbilityList::builder().str(strength).build())
+        .ab(ab)
+        .base_apr(base_apr)
+        .extra_apr(extra_apr)
+        .weapon(weapon);
+
+    for feature in features {
+        builder = builder.add_feat(get_feat(feature));
+    }
+
+    builder.build()
 }
 
 #[tauri::command]

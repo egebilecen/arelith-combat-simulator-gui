@@ -16,6 +16,7 @@ fn main() {
         insert_row,
         delete_row,
         get_base_weapons,
+        create_character,
         create_weapon,
         test
     ]);
