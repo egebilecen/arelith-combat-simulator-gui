@@ -27,7 +27,7 @@ import {
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
-import { getWeaponBaseStr } from "../Util/weapon";
+import { getDiceStr, getWeaponBaseStr } from "../Util/weapon";
 
 const { Text } = Typography;
 
@@ -278,16 +278,6 @@ function WeaponListPage() {
                         const properties = item.obj.item_properties
                             .slice(2)
                             .map((obj) => {
-                                const get_value = (value) => {
-                                    let val = value.faces;
-
-                                    if (value.rolls > 1) {
-                                        val = val + "d" + value.rolls;
-                                    }
-
-                                    return val;
-                                };
-
                                 const key = Object.keys(obj)[0];
                                 let iprop = obj[key];
 
@@ -304,7 +294,7 @@ function WeaponListPage() {
                                             >
                                                 Damage Bonus:
                                             </Text>{" "}
-                                            {get_value(iprop.amount)}{" "}
+                                            {getDiceStr(iprop.amount, true)}{" "}
                                             {iprop.type_}
                                         </Text>
                                     );
@@ -321,7 +311,7 @@ function WeaponListPage() {
                                             >
                                                 Massive Critical:
                                             </Text>{" "}
-                                            {get_value(iprop)}
+                                            {getDiceStr(iprop, true)}
                                         </Text>
                                     );
                                 }
