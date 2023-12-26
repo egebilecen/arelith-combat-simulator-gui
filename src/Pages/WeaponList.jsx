@@ -23,6 +23,7 @@ import {
     LoadingOutlined,
     PlusOutlined,
     MinusCircleOutlined,
+    DeleteOutlined,
 } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
@@ -76,8 +77,24 @@ function WeaponListPage() {
         });
     };
 
-    const handleNewWeaponClick = (e) => {
+    const handleNewWeaponClick = () => {
         setIsWeaponFormOpen(true);
+    };
+
+    const handleDeleteAllWeaponClick = async () => {
+        let res = await invoke("delete_all_rows", {
+            table: "weapons",
+        });
+
+        if (res.success) {
+            showMessage("success", "All weapons are successfully deleted.");
+            setWeaponList([]);
+        } else {
+            showMessage(
+                "error",
+                "An error occured while deleting all weapons: " + res.msg
+            );
+        }
     };
 
     const handleDeleteWeaponClick = async (id) => {
@@ -88,7 +105,7 @@ function WeaponListPage() {
 
         if (res.success) {
             showMessage("success", "The weapon is successfully deleted.");
-            setWeaponList(weaponList.filter((e, i) => e.id !== id));
+            setWeaponList(weaponList.filter((e) => e.id !== id));
         } else {
             showMessage(
                 "error",
@@ -121,13 +138,13 @@ function WeaponListPage() {
         }
     };
 
-    const handleWeaponFormCancelClick = (e) => {
+    const handleWeaponFormCancelClick = () => {
         weaponForm.resetFields();
         setShowExtraField({});
         setIsWeaponFormOpen(false);
     };
 
-    const handleWeaponFormCreateClick = async (e) => {
+    const handleWeaponFormCreateClick = async () => {
         setIsCreatingWeapon(true);
 
         try {
@@ -225,7 +242,27 @@ function WeaponListPage() {
                         marginBottom: 10,
                         display: isLoading || isErrorOccured ? "none" : "flex",
                     }}
+                    gap="small"
                 >
+                    {weaponList.length > 1 && (
+                        <Popconfirm
+                            title="Warning"
+                            description="Are you sure to delete all weapons?"
+                            onConfirm={handleDeleteAllWeaponClick}
+                            okText="Yes"
+                            cancelText="No"
+                            placement="bottom"
+                        >
+                            <Button
+                                type="primary"
+                                icon={<DeleteOutlined />}
+                                danger
+                            >
+                                Delete All
+                            </Button>
+                        </Popconfirm>
+                    )}
+
                     <Button
                         type="primary"
                         icon={<PlusOutlined />}
