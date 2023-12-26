@@ -53,7 +53,7 @@ function ItemPropStats({ itemProperties, width }) {
         >
             {itemProps.map((iprop, i) => (
                 <Col key={"iprop-" + i} span={24}>
-                    {iprop}
+                    &#x2022; {iprop}
                 </Col>
             ))}
         </Row>
