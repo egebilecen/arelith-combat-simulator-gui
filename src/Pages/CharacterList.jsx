@@ -21,6 +21,7 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
+import WeaponStats from "../Components/WeaponStats";
 
 const { Text } = Typography;
 
@@ -273,7 +274,7 @@ function CharacterListPage() {
                                                     Weapon
                                                 </Text>
                                                 <br />
-                                                <Tooltip>
+                                                <Tooltip title={<WeaponStats weapon={item.obj.weapon} />}>
                                                     <Typography.Link
                                                         style={{
                                                             cursor: "inherit",
