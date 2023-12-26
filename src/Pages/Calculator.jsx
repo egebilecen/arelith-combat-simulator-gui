@@ -28,6 +28,13 @@ function CalculatorPage() {
     const [characterList, setCharacterList] = useState([]);
 
     const handleSelectUnselectAllCharacters = () => {
+        if (isSelectingAll)
+            configForm.setFieldValue(
+                "characters",
+                characterList.map((e) => e.id)
+            );
+        else configForm.setFieldValue("characters", []);
+
         setIsSelectingAll(!isSelectingAll);
     };
 
