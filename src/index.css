@@ -13,5 +13,6 @@ body {
 
 #root {
     border: 1px solid #eee;
-    border-radius: 6px;
+    border-radius: 8px;
+    overflow: hidden;
 }
