@@ -16,12 +16,14 @@ import {
     InputNumber,
     Typography,
     Divider,
+    Popconfirm,
 } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
 import WeaponStats from "../Components/WeaponStats";
+import { getWeaponBaseStr } from "../Util/weapon";
 
 const { Text } = Typography;
 
@@ -49,6 +51,23 @@ function CharacterListPage() {
 
     const handleNewCharacterClick = (e) => {
         setIsCharacterFormOpen(true);
+    };
+
+    const handleDeleteCharacterClick = async (id) => {
+        let res = await invoke("delete_row", {
+            table: "characters",
+            id: id,
+        });
+
+        if (res.success) {
+            showMessage("success", "The character is successfully deleted.");
+            setCharacterList(characterList.filter((e, i) => e.id !== id));
+        } else {
+            showMessage(
+                "error",
+                "An error occured while deleting the character: " + res.msg
+            );
+        }
     };
 
     const handleCharacterFormCancelClick = (e) => {
@@ -218,12 +237,78 @@ function CharacterListPage() {
                         item.obj = JSON.parse(item.json);
                         console.log(item);
 
+                        const actions = [
+                            <Popconfirm
+                                title="Warning"
+                                description="Are you sure to delete this character?"
+                                onConfirm={() =>
+                                    handleDeleteCharacterClick(item.id)
+                                }
+                                okText="Yes"
+                                cancelText="No"
+                                placement="left"
+                            >
+                                <a>delete</a>
+                            </Popconfirm>,
+                        ];
+
                         return (
-                            <List.Item actions={[<a key="delete">delete</a>]}>
+                            <List.Item actions={actions}>
                                 <List.Item.Meta
                                     title={
                                         <>
                                             <Text>{item.name}</Text>
+                                            <Divider type="vertical" />
+                                            <span>
+                                                <Tooltip
+                                                    title={
+                                                        <Row>
+                                                            {item.obj.feats
+                                                                .length > 0 ? (
+                                                                item.obj.feats.map(
+                                                                    (e) => (
+                                                                        <Col
+                                                                            span={
+                                                                                24
+                                                                            }
+                                                                        >
+                                                                            <Text
+                                                                                style={{
+                                                                                    color: "inherit",
+                                                                                }}
+                                                                            >
+                                                                                &#x2022;{" "}
+                                                                                {
+                                                                                    e
+                                                                                }
+                                                                            </Text>
+                                                                        </Col>
+                                                                    )
+                                                                )
+                                                            ) : (
+                                                                <Col span={24}>
+                                                                    This
+                                                                    character
+                                                                    has no
+                                                                    features.
+                                                                </Col>
+                                                            )}
+                                                        </Row>
+                                                    }
+                                                    placement="bottom"
+                                                >
+                                                    <Typography.Link
+                                                        style={{
+                                                            cursor: "inherit",
+                                                            fontWeight:
+                                                                "initial",
+                                                        }}
+                                                    >
+                                                        {item.obj.feats.length}{" "}
+                                                        Feature
+                                                    </Typography.Link>
+                                                </Tooltip>
+                                            </span>
                                             <Divider type="vertical" />
                                             <Text
                                                 type="secondary"
@@ -274,7 +359,15 @@ function CharacterListPage() {
                                                     Weapon
                                                 </Text>
                                                 <br />
-                                                <Tooltip title={<WeaponStats weapon={item.obj.weapon} />}>
+                                                <Tooltip
+                                                    title={
+                                                        <WeaponStats
+                                                            weapon={
+                                                                item.obj.weapon
+                                                            }
+                                                        />
+                                                    }
+                                                >
                                                     <Typography.Link
                                                         style={{
                                                             cursor: "inherit",
@@ -409,7 +502,7 @@ function CharacterListPage() {
                                         },
                                     ]}
                                 >
-                                    <InputNumber placeholder="40" />
+                                    <InputNumber placeholder="40" min={4} />
                                 </Form.Item>
                             </Col>
                             <Col span={6}>
@@ -497,7 +590,7 @@ function CharacterListPage() {
                                                         crit_mult +
                                                         ")",
                                                     value: weapon_row.id,
-                                                    title: "",
+                                                    title: getWeaponBaseStr(weapon_row.obj.base),
                                                 };
                                             }
                                         )}
