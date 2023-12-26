@@ -173,10 +173,6 @@ function CharacterListPage() {
                 });
             }
 
-            console.log(rows);
-            console.log(weapon_rows);
-            console.log("---");
-
             setCharacterList(rows.result);
             setWeaponList(weapon_rows.result);
         }
@@ -235,7 +231,6 @@ function CharacterListPage() {
                     dataSource={characterList}
                     renderItem={(item) => {
                         item.obj = JSON.parse(item.json);
-                        console.log(item);
 
                         const actions = [
                             <Popconfirm
@@ -266,8 +261,9 @@ function CharacterListPage() {
                                                             {item.obj.feats
                                                                 .length > 0 ? (
                                                                 item.obj.feats.map(
-                                                                    (e) => (
+                                                                    (e, i) => (
                                                                         <Col
+                                                                            key={"feat-" + i}
                                                                             span={
                                                                                 24
                                                                             }
