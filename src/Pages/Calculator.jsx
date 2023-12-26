@@ -12,10 +12,15 @@ import {
     Select,
     Divider,
     Typography,
+    Slider,
+    Checkbox,
+    InputNumber,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { invoke } from "@tauri-apps/api";
 import PageContainer from "../Sections/PageContainer";
+
+const { Text } = Typography;
 
 function CalculatorPage() {
     const { token } = theme.useToken();
@@ -26,6 +31,7 @@ function CalculatorPage() {
     const [errorText, setErrorText] = useState("Unknown");
     const [isSelectingAll, setIsSelectingAll] = useState(true);
     const [characterList, setCharacterList] = useState([]);
+    const [dummyAcRange, setDummyAcRange] = useState([35, 65]);
 
     const handleSelectUnselectAllCharacters = () => {
         if (isSelectingAll)
@@ -36,6 +42,10 @@ function CalculatorPage() {
         else configForm.setFieldValue("characters", []);
 
         setIsSelectingAll(!isSelectingAll);
+    };
+
+    const handleAcRangeChange = (e) => {
+        setDummyAcRange(e);
     };
 
     const stepList = [
@@ -69,7 +79,7 @@ function CalculatorPage() {
                 />
             ) : (
                 <Form form={configForm} layout="vertical" requiredMark={false}>
-                    <Row>
+                    <Row gutter={16}>
                         <Col span={24}>
                             <Form.Item
                                 name="characters"
@@ -109,6 +119,109 @@ function CalculatorPage() {
                             </Form.Item>
                         </Col>
                     </Row>
+                    <Row>
+                        <span>
+                            <b>Target Settings</b>
+                        </span>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col span={24}>
+                            <Form.Item
+                                name={["dummy", "ac_range"]}
+                                label={(() => {
+                                    let val1 = dummyAcRange[0];
+                                    let val2 = dummyAcRange[1];
+
+                                    return (
+                                        <>
+                                            <span>
+                                                AC
+                                                {val1 !== val2
+                                                    ? " Range"
+                                                    : ""}:{" "}
+                                                <Text strong>
+                                                    {val1 +
+                                                        (val2 !== val1
+                                                            ? " - " + val2
+                                                            : "")}
+                                                </Text>
+                                            </span>
+                                            <Divider type="vertical" />
+                                            <Form.Item
+                                                name={[
+                                                    "dummy",
+                                                    "has_epic_dodge",
+                                                ]}
+                                                valuePropName="checked"
+                                                style={{ margin: 0 }}
+                                                initialValue={false}
+                                            >
+                                                <Checkbox>
+                                                    Has Epic Dodge
+                                                </Checkbox>
+                                            </Form.Item>
+                                        </>
+                                    );
+                                })()}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message:
+                                            "Please select a target AC range.",
+                                    },
+                                ]}
+                                initialValue={dummyAcRange}
+                            >
+                                <Slider
+                                    range
+                                    tooltip={{ placement: "bottom" }}
+                                    step={5}
+                                    min={0}
+                                    max={80}
+                                    dots
+                                    onChange={handleAcRangeChange}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                name={["dummy", "concealment"]}
+                                label="Concealment"
+                                initialValue={50}
+                                style={{ margin: 0 }}
+                            >
+                                <InputNumber
+                                    min={0}
+                                    max={100}
+                                    formatter={(val) => val + "%"}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                name={["dummy", "defensive_essence"]}
+                                label="Defensive Essence"
+                                initialValue={5}
+                                style={{ margin: 0 }}
+                            >
+                                <InputNumber min={0} max={100} />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                name={["dummy", "damage_immunity"]}
+                                label="Damage Immunity"
+                                initialValue={10}
+                                style={{ margin: 0 }}
+                            >
+                                <InputNumber
+                                    min={0}
+                                    max={100}
+                                    formatter={(val) => val + "%"}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
                 </Form>
             ),
         },
@@ -122,8 +235,15 @@ function CalculatorPage() {
         setCurrentContentIndex(currentStepIndex - 1);
     };
 
-    const nextContent = () => {
-        setCurrentContentIndex(currentStepIndex + 1);
+    const nextContent = async () => {
+        try {
+            const values = await configForm.validateFields();
+            setCurrentContentIndex(currentStepIndex + 1);
+
+            console.log(values);
+        } catch (errorInfo) {
+            console.log("Failed:", errorInfo);
+        }
     };
 
     const startSimulation = () => {
