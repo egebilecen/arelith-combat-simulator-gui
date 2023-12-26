@@ -23,7 +23,7 @@ function menuItem(label, key, icon, page, children, type) {
 }
 
 const items = [
-    menuItem("Calculator", "calculator", <CalculatorOutlined />, <HomePage />),
+    menuItem("Simulator", "calculator", <CalculatorOutlined />, <HomePage />),
     menuItem(
         "Character List",
         "character_list",

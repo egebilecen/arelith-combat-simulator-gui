@@ -96,7 +96,7 @@ function CalculatorPage() {
                                             title: "",
                                         };
                                     })}
-                                    placeholder="Select a character or characters."
+                                    placeholder="Select a character or multiple characters."
                                     mode="multiple"
                                 />
                             </Form.Item>
