@@ -15,6 +15,7 @@ fn main() {
         get_rows,
         insert_row,
         delete_row,
+        delete_all_rows,
         get_base_weapons,
         create_character,
         create_weapon,

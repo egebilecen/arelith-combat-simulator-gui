@@ -42,6 +42,11 @@ pub fn delete_row(table: &str, id: i32) -> db::QueryResult<usize> {
 }
 
 #[tauri::command]
+pub fn delete_all_rows(table: &str) -> db::QueryResult<usize> {
+    db::delete_all_rows(table)
+}
+
+#[tauri::command]
 pub fn get_base_weapons() -> HashMap<String, WeaponBase> {
     get_weapon_base_list()
 }

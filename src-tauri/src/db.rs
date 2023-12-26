@@ -159,3 +159,19 @@ pub fn delete_row(table: &str, id: i32) -> QueryResult<usize> {
 
     error_result(res.err().unwrap())
 }
+
+pub fn delete_all_rows(table: &str) -> QueryResult<usize> {
+    let conn = get_db();
+
+    let res = conn.execute(format!("DELETE FROM {}", table).as_str(), []);
+
+    if res.is_ok() {
+        return QueryResult {
+            success: true,
+            result: res.unwrap(),
+            msg: "".into(),
+        };
+    }
+
+    error_result(res.err().unwrap())
+}
