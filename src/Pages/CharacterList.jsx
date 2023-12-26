@@ -18,7 +18,7 @@ import {
     Divider,
     Popconfirm,
 } from "antd";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { LoadingOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
@@ -49,8 +49,24 @@ function CharacterListPage() {
         });
     };
 
-    const handleNewCharacterClick = (e) => {
+    const handleNewCharacterClick = () => {
         setIsCharacterFormOpen(true);
+    };
+
+    const handleDeleteAllCharatacterClick = async () => {
+        let res = await invoke("delete_all_rows", {
+            table: "characters",
+        });
+
+        if (res.success) {
+            showMessage("success", "All characters are successfully deleted.");
+            setCharacterList([]);
+        } else {
+            showMessage(
+                "error",
+                "An error occured while deleting all characters: " + res.msg
+            );
+        }
     };
 
     const handleDeleteCharacterClick = async (id) => {
@@ -70,12 +86,12 @@ function CharacterListPage() {
         }
     };
 
-    const handleCharacterFormCancelClick = (e) => {
+    const handleCharacterFormCancelClick = () => {
         characterForm.resetFields();
         setIsCharacterFormOpen(false);
     };
 
-    const handleCharacterCreateClick = async (e) => {
+    const handleCharacterCreateClick = async () => {
         setIsCreatingCharacter(true);
 
         try {
@@ -190,7 +206,27 @@ function CharacterListPage() {
                         marginBottom: 10,
                         display: isLoading || isErrorOccured ? "none" : "flex",
                     }}
+                    gap="small"
                 >
+                    {characterList.length > 1 && (
+                        <Popconfirm
+                            title="Warning"
+                            description="Are you sure to delete all characters?"
+                            onConfirm={handleDeleteAllCharatacterClick}
+                            okText="Yes"
+                            cancelText="No"
+                            placement="bottom"
+                        >
+                            <Button
+                                type="primary"
+                                icon={<DeleteOutlined />}
+                                danger
+                            >
+                                Delete All
+                            </Button>
+                        </Popconfirm>
+                    )}
+
                     <Button
                         type="primary"
                         icon={<PlusOutlined />}
