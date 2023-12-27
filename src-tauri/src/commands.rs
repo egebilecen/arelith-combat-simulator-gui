@@ -7,10 +7,28 @@ use arelith::{
         weapon_db::{get_weapon_base, get_weapon_base_list},
         Damage, DamageType, ItemProperty, Weapon, WeaponBase,
     },
+    simulator::CombatSimulator,
     size::SizeCategory,
 };
+use serde::Serialize;
 use serde_json::Value;
 use std::collections::HashMap;
+use tauri::Manager;
+
+#[derive(Clone, Serialize)]
+struct SimulationUpdatePayload<'a> {
+    status: &'a str,
+    details: Option<serde_json::Value>,
+}
+
+impl<'a> SimulationUpdatePayload<'a> {
+    pub fn new(status: &'a str, details: Option<serde_json::Value>) -> Self {
+        Self { status, details }
+    }
+}
+
+#[derive(Clone, Serialize)]
+struct SimulationCharacterUpdatePayload {}
 
 #[tauri::command]
 pub fn is_debug() -> bool {
@@ -170,11 +188,50 @@ pub fn create_weapon(
 
 #[tauri::command]
 pub fn start_simulation(
+    app: tauri::AppHandle,
     total_rounds: i32,
     characters: Vec<Character>,
     dummy_ac_list: Vec<i32>,
+    dummy_concealment: i32,
     dummy_has_epic_dodge: bool,
     dummy_damage_immunity: i32,
     dummy_defensive_essence: i32,
 ) {
+    let combat_simulator = CombatSimulator::new(total_rounds);
+
+    let cb_app = app.clone();
+    let callback_fn = move |_: &_, _: &_, _: &_| {
+        let _ = cb_app.emit_all(
+            "simulation_update",
+            SimulationUpdatePayload::new("working", None),
+        );
+    };
+
+    combat_simulator.set_damage_test_notifier(&callback_fn);
+
+    for character in characters {
+        let ac_list = dummy_ac_list.clone();
+
+        let _result = combat_simulator.damage_test(
+            &character,
+            ac_list,
+            dummy_concealment,
+            dummy_damage_immunity,
+            dummy_defensive_essence,
+            dummy_has_epic_dodge,
+        );
+
+        let _ = app.emit_all(
+            "simulation_update",
+            SimulationUpdatePayload::new(
+                "character_complete",
+                Some(serde_json::to_value(character).unwrap()),
+            ),
+        );
+    }
+
+    let _ = app.emit_all(
+        "simulation_update",
+        SimulationUpdatePayload::new("done", None),
+    );
 }

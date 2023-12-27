@@ -1,3 +1,5 @@
+import { appWindow } from "@tauri-apps/api/window";
+import { listen } from "@tauri-apps/api/event";
 import { useState, useEffect, useContext } from "react";
 import {
     Steps,
@@ -23,6 +25,14 @@ import PageContainer from "../Sections/PageContainer";
 import { AppContext } from "../App";
 
 const { Text } = Typography;
+
+const unlistenSimulationUpdate = await listen("simulation_update", (e) => {
+    let payload = e.payload;
+    console.log(payload);
+
+    if (payload.status == "done") {
+    }
+});
 
 function CalculatorPage() {
     const { token } = theme.useToken();
@@ -265,7 +275,7 @@ function CalculatorPage() {
                             </Text>
                             <Form.Item
                                 name="simulation_rounds"
-                                initialValue={500000}
+                                initialValue={100}
                             >
                                 <InputNumber
                                     style={{
@@ -316,11 +326,32 @@ function CalculatorPage() {
 
         setIsSimulationInProgress(true);
         setSimulationProgressBarStatus("normal");
-        setSimulationLogText("Simulation is starting...");
+        setSimulationLogText("Simulation is started...");
+
+        const dummyAcRange = [];
+
+        for (
+            let i = simulationData.dummy.ac_range[0];
+            i <= simulationData.dummy.ac_range[1];
+            i += 5
+        ) {
+            dummyAcRange.push(i);
+        }
 
         try {
             await invoke("start_simulation", {
+                app: appWindow,
                 totalRounds: simulationRounds,
+                characters: characterList
+                    .filter(
+                        (e) => simulationData.characters.indexOf(e.id) !== -1
+                    )
+                    .map((e) => e.obj),
+                dummyAcList: dummyAcRange,
+                dummyConcealment: simulationData.dummy.concealment,
+                dummyHasEpicDodge: simulationData.dummy.has_epic_dodge,
+                dummyDamageImmunity: simulationData.dummy.damage_immunity,
+                dummyDefensiveEssence: simulationData.dummy.defensive_essence,
             });
         } catch (errorInfo) {
             setIsSimulationInProgress(false);
@@ -349,7 +380,14 @@ function CalculatorPage() {
                 return;
             }
 
-            setCharacterList(characters.result);
+            setCharacterList(
+                characters.result.map((e) => {
+                    const temp = e;
+                    temp.obj = JSON.parse(e.json);
+
+                    return temp;
+                })
+            );
         }
 
         func();
