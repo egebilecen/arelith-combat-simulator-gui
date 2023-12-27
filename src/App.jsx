@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { ConfigProvider } from "antd";
+import { useState, createContext } from "react";
+import { ConfigProvider, message } from "antd";
 import AppWindow from "./AppWindow";
+
+export const AppContext = createContext(null);
 
 const lightTheme = {
     token: {},
@@ -25,13 +27,36 @@ const darkTheme = {
 };
 
 function App() {
+    const [isSimulationInProgress, setIsSimulationInProgress] = useState(false);
     const [currentThemeStr, setCurrentThemeStr] = useState("light");
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const showMessage = (type, text) => {
+        messageApi.open({
+            type: type,
+            content: text,
+            style: {
+                marginTop: 64,
+                marginLeft: 172,
+            },
+            duration: 2,
+        });
+    };
 
     return (
         <ConfigProvider
             theme={currentThemeStr === "light" ? lightTheme : darkTheme}
         >
-            <AppWindow themeStr={currentThemeStr} />
+            <AppContext.Provider
+                value={{
+                    isSimulationInProgress: isSimulationInProgress,
+                    setIsSimulationInProgress: setIsSimulationInProgress,
+                    showMessage: showMessage,
+                }}
+            >
+                {contextHolder}
+                <AppWindow themeStr={currentThemeStr} />
+            </AppContext.Provider>
         </ConfigProvider>
     );
 }
