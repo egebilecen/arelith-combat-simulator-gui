@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     Spin,
     Button,
@@ -12,7 +12,6 @@ import {
     Input,
     Select,
     Tooltip,
-    message,
     InputNumber,
     Typography,
     Divider,
@@ -24,12 +23,12 @@ import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
 import WeaponStats from "../Components/WeaponStats";
 import { getWeaponBaseStr } from "../Util/weapon";
+import { AppContext } from "../App";
 
 const { Text } = Typography;
 
 function CharacterListPage() {
-    const [messageApi, contextHolder] = message.useMessage();
-
+    const { showMessage } = useContext(AppContext);
     const [isLoading, setIsLoading] = useState(true);
     const [isErrorOccured, setIsErrorOccured] = useState(false);
     const [errorText, setErrorText] = useState("Unknown");
@@ -38,16 +37,6 @@ function CharacterListPage() {
     const [isCharacterFormOpen, setIsCharacterFormOpen] = useState(false);
     const [characterForm] = Form.useForm();
     const [isCreatingCharacter, setIsCreatingCharacter] = useState(false);
-
-    const showMessage = (type, text) => {
-        messageApi.open({
-            type: type,
-            content: text,
-            style: {
-                marginTop: 64,
-            },
-        });
-    };
 
     const handleNewCharacterClick = () => {
         setIsCharacterFormOpen(true);
@@ -198,7 +187,6 @@ function CharacterListPage() {
 
     return (
         <>
-            {contextHolder}
             <PageContainer>
                 <Flex
                     justify="end"

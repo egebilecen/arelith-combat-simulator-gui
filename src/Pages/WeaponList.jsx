@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
     Spin,
     Button,
@@ -15,7 +15,6 @@ import {
     Tooltip,
     Checkbox,
     Divider,
-    message,
     Typography,
     Popconfirm,
 } from "antd";
@@ -30,6 +29,7 @@ import PageContainer from "../Sections/PageContainer";
 import ItemPropStats from "../Components/ItemPropStats";
 import { invoke } from "@tauri-apps/api";
 import { getWeaponBaseStr } from "../Util/weapon";
+import { AppContext } from "../App";
 
 const { Text } = Typography;
 
@@ -55,8 +55,7 @@ const damageTypes = [
 ];
 
 function WeaponListPage() {
-    const [messageApi, contextHolder] = message.useMessage();
-
+    const { showMessage } = useContext(AppContext);
     const [isLoading, setIsLoading] = useState(true);
     const [isErrorOccured, setIsErrorOccured] = useState(false);
     const [errorText, setErrorText] = useState("Unknown");
@@ -66,16 +65,6 @@ function WeaponListPage() {
     const [baseWeapons, setBaseWeapons] = useState([]);
     const [showExtraField, setShowExtraField] = useState({});
     const [isCreatingWeapon, setIsCreatingWeapon] = useState(false);
-
-    const showMessage = (type, text) => {
-        messageApi.open({
-            type: type,
-            content: text,
-            style: {
-                marginTop: 64,
-            },
-        });
-    };
 
     const handleNewWeaponClick = () => {
         setIsWeaponFormOpen(true);
@@ -234,7 +223,6 @@ function WeaponListPage() {
 
     return (
         <>
-            {contextHolder}
             <PageContainer>
                 <Flex
                     justify="end"
