@@ -1,6 +1,6 @@
 import { appWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import {
     Steps,
     Button,
@@ -26,13 +26,7 @@ import { AppContext } from "../App";
 
 const { Text } = Typography;
 
-const unlistenSimulationUpdate = await listen("simulation_update", (e) => {
-    let payload = e.payload;
-    console.log(payload);
-
-    if (payload.status == "done") {
-    }
-});
+let unlistenSimulationUpdate;
 
 function CalculatorPage() {
     const { token } = theme.useToken();
@@ -48,12 +42,23 @@ function CalculatorPage() {
     const [characterList, setCharacterList] = useState([]);
     const [dummyAcRange, setDummyAcRange] = useState([35, 65]);
     const [simulationData, setSimulationData] = useState({});
-    const [simulationProgress, setSimulationProgress] = useState(0);
     const [simulationLogText, setSimulationLogText] = useState(
         "Waiting for simulation to start..."
     );
     const [simulationProgressBarStatus, setSimulationProgressBarStatus] =
         useState("normal");
+    const [simulationTotalCombatCount, setSimulationTotalCombatCount] =
+        useState(-1);
+    const [simulationProgress, setSimulationProgress] = [
+        useRef(0),
+        (val) => {
+            simulationProgress.current = val;
+        },
+    ];
+
+    // https://blog.logrocket.com/how-when-to-force-react-component-re-render/
+    const [, updateState] = useState();
+    const forceRender = useCallback(() => updateState({}), []);
 
     const handleSelectUnselectAllCharacters = () => {
         if (isSelectingAll)
@@ -288,7 +293,15 @@ function CalculatorPage() {
                         </Form>
                         <Progress
                             type="circle"
-                            percent={simulationProgress}
+                            percent={
+                                simulationProgress.current !==
+                                simulationTotalCombatCount
+                                    ? parseInt(
+                                          simulationProgress.current *
+                                              (100 / simulationTotalCombatCount)
+                                      )
+                                    : 100
+                            }
                             status={simulationProgressBarStatus}
                             style={{
                                 marginBottom: 6,
@@ -321,9 +334,7 @@ function CalculatorPage() {
         const simulationRounds =
             simulationForm.getFieldValue("simulation_rounds");
 
-        console.log(simulationRounds);
-        console.log(simulationData);
-
+        setSimulationProgress(0);
         setIsSimulationInProgress(true);
         setSimulationProgressBarStatus("normal");
         setSimulationLogText("Simulation is started...");
@@ -338,15 +349,17 @@ function CalculatorPage() {
             dummyAcRange.push(i);
         }
 
+        const characters = characterList
+            .filter((e) => simulationData.characters.indexOf(e.id) !== -1)
+            .map((e) => e.obj);
+
+        setSimulationTotalCombatCount(dummyAcRange.length * characters.length);
+
         try {
             await invoke("start_simulation", {
                 app: appWindow,
                 totalRounds: simulationRounds,
-                characters: characterList
-                    .filter(
-                        (e) => simulationData.characters.indexOf(e.id) !== -1
-                    )
-                    .map((e) => e.obj),
+                characters: characters,
                 dummyAcList: dummyAcRange,
                 dummyConcealment: simulationData.dummy.concealment,
                 dummyHasEpicDodge: simulationData.dummy.has_epic_dodge,
@@ -368,6 +381,41 @@ function CalculatorPage() {
     // Load stuff
     useEffect(() => {
         async function func() {
+            unlistenSimulationUpdate = await listen(
+                "simulation_update",
+                (e) => {
+                    let payload = e.payload;
+                    console.log(payload);
+
+                    switch (payload.status) {
+                        case "done":
+                            {
+                                setIsSimulationInProgress(false);
+                                setSimulationProgressBarStatus("success");
+                                setSimulationLogText(
+                                    "Simulation is completed!"
+                                );
+                            }
+                            break;
+
+                        case "working":
+                            {
+                                setSimulationProgress(simulationProgress.current + 1);
+                                forceRender();
+                            }
+                            break;
+
+                        case "character_complete":
+                            {
+                            }
+                            break;
+                    }
+
+                    if (payload.status == "done") {
+                    }
+                }
+            );
+
             const [characters] = await Promise.all([
                 invoke("get_rows", { table: "characters" }),
             ]);
