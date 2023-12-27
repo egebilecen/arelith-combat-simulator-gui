@@ -317,6 +317,37 @@ function CalculatorPage() {
     };
 
     const startSimulation = async () => {
+        unlistenSimulationUpdate = await listen("simulation_update", (e) => {
+            let payload = e.payload;
+            console.log(payload);
+
+            switch (payload.status) {
+                case "done":
+                    {
+                        setIsSimulationInProgress(false);
+                        setSimulationProgressBarStatus("success");
+                        setSimulationLogText("Simulation is completed!");
+                    }
+                    break;
+
+                case "working":
+                    {
+                        setSimulationProgress(simulationProgress.current + 1);
+                        forceRender();
+                    }
+                    break;
+
+                case "character_complete":
+                    {
+                    }
+                    break;
+            }
+
+            if (payload.status == "done") {
+                unlistenSimulationUpdate();
+            }
+        });
+
         setSimulationProgress(0);
         setIsSimulationInProgress(true);
         setSimulationProgressBarStatus("normal");
@@ -364,43 +395,6 @@ function CalculatorPage() {
     // Load stuff
     useEffect(() => {
         async function func() {
-            unlistenSimulationUpdate = await listen(
-                "simulation_update",
-                (e) => {
-                    let payload = e.payload;
-                    console.log(payload);
-
-                    switch (payload.status) {
-                        case "done":
-                            {
-                                setIsSimulationInProgress(false);
-                                setSimulationProgressBarStatus("success");
-                                setSimulationLogText(
-                                    "Simulation is completed!"
-                                );
-                            }
-                            break;
-
-                        case "working":
-                            {
-                                setSimulationProgress(
-                                    simulationProgress.current + 1
-                                );
-                                forceRender();
-                            }
-                            break;
-
-                        case "character_complete":
-                            {
-                            }
-                            break;
-                    }
-
-                    if (payload.status == "done") {
-                    }
-                }
-            );
-
             const [characters] = await Promise.all([
                 invoke("get_rows", { table: "characters" }),
             ]);
