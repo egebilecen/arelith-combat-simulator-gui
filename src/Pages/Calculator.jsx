@@ -33,7 +33,6 @@ function CalculatorPage() {
     const { isSimulationInProgress, setIsSimulationInProgress } =
         useContext(AppContext);
     const [configForm] = Form.useForm();
-    const [simulationForm] = Form.useForm();
     const [currentStepIndex, setCurrentContentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isErrorOccured, setIsErrorOccured] = useState(false);
@@ -107,7 +106,7 @@ function CalculatorPage() {
             ) : (
                 <Form form={configForm} layout="vertical" requiredMark={false}>
                     <Row gutter={16}>
-                        <Col span={24}>
+                        <Col span={16}>
                             <Form.Item
                                 name="characters"
                                 label={
@@ -142,6 +141,18 @@ function CalculatorPage() {
                                     })}
                                     placeholder="Select a character or multiple characters."
                                     mode="multiple"
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                name="simulation_rounds"
+                                label="Simulation Rounds"
+                                initialValue={100}
+                            >
+                                <InputNumber
+                                    min={1}
+                                    style={{ width: "100%" }}
                                 />
                             </Form.Item>
                         </Col>
@@ -210,6 +221,8 @@ function CalculatorPage() {
                                 />
                             </Form.Item>
                         </Col>
+                    </Row>
+                    <Row gutter={16}>
                         <Col span={8}>
                             <Form.Item
                                 name={["dummy", "concealment"]}
@@ -264,33 +277,6 @@ function CalculatorPage() {
                         }}
                         vertical
                     >
-                        <Form
-                            form={simulationForm}
-                            layout="vertical"
-                            requiredMark={false}
-                        >
-                            <Text
-                                style={{
-                                    display: "block",
-                                    textAlign: "center",
-                                    marginBottom: 2,
-                                }}
-                            >
-                                Number Of Rounds To Simulate
-                            </Text>
-                            <Form.Item
-                                name="simulation_rounds"
-                                initialValue={100}
-                            >
-                                <InputNumber
-                                    style={{
-                                        width: "100%",
-                                    }}
-                                    min={1}
-                                    disabled={isSimulationInProgress}
-                                />
-                            </Form.Item>
-                        </Form>
                         <Progress
                             type="circle"
                             percent={
@@ -331,9 +317,6 @@ function CalculatorPage() {
     };
 
     const startSimulation = async () => {
-        const simulationRounds =
-            simulationForm.getFieldValue("simulation_rounds");
-
         setSimulationProgress(0);
         setIsSimulationInProgress(true);
         setSimulationProgressBarStatus("normal");
@@ -358,7 +341,7 @@ function CalculatorPage() {
         try {
             await invoke("start_simulation", {
                 app: appWindow,
-                totalRounds: simulationRounds,
+                totalRounds: simulationData.simulation_rounds,
                 characters: characters,
                 dummyAcList: dummyAcRange,
                 dummyConcealment: simulationData.dummy.concealment,
@@ -400,7 +383,9 @@ function CalculatorPage() {
 
                         case "working":
                             {
-                                setSimulationProgress(simulationProgress.current + 1);
+                                setSimulationProgress(
+                                    simulationProgress.current + 1
+                                );
                                 forceRender();
                             }
                             break;
