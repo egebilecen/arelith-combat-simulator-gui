@@ -19,7 +19,7 @@ fn main() {
         get_base_weapons,
         create_character,
         create_weapon,
-        test
+        start_simulation
     ]);
 
     #[cfg(debug_assertions)]

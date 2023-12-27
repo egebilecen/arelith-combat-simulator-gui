@@ -169,15 +169,12 @@ pub fn create_weapon(
 }
 
 #[tauri::command]
-pub fn test() -> Weapon {
-    Weapon::new(
-        "Weapon Name".into(),
-        get_weapon_base("Bastard Sword"),
-        vec![ItemProperty::DamageBonus(Damage::new(
-            DamageType::Bludgeoning,
-            Dice::from("1d6"),
-            true,
-            true,
-        ))],
-    )
+pub fn start_simulation(
+    total_rounds: i32,
+    characters: Vec<Character>,
+    dummy_ac_list: Vec<i32>,
+    dummy_has_epic_dodge: bool,
+    dummy_damage_immunity: i32,
+    dummy_defensive_essence: i32,
+) {
 }
