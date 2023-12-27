@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
     Steps,
     Button,
@@ -19,11 +19,14 @@ import {
 import { LoadingOutlined } from "@ant-design/icons";
 import { invoke } from "@tauri-apps/api";
 import PageContainer from "../Sections/PageContainer";
+import { AppContext } from "../App";
 
 const { Text } = Typography;
 
 function CalculatorPage() {
     const { token } = theme.useToken();
+    const { isSimulationInProgress, setIsSimulationInProgress } =
+        useContext(AppContext);
     const [configForm] = Form.useForm();
     const [currentStepIndex, setCurrentContentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +35,7 @@ function CalculatorPage() {
     const [isSelectingAll, setIsSelectingAll] = useState(true);
     const [characterList, setCharacterList] = useState([]);
     const [dummyAcRange, setDummyAcRange] = useState([35, 65]);
+    const [simulationData, setSimulationData] = useState({});
 
     const handleSelectUnselectAllCharacters = () => {
         if (isSelectingAll)
@@ -239,6 +243,7 @@ function CalculatorPage() {
         try {
             const values = await configForm.validateFields();
             setCurrentContentIndex(currentStepIndex + 1);
+            setSimulationData(values);
 
             console.log(values);
         } catch (errorInfo) {
@@ -247,7 +252,8 @@ function CalculatorPage() {
     };
 
     const startSimulation = () => {
-        console.log("Starting...");
+        console.log(simulationData);
+        setIsSimulationInProgress(true);
     };
 
     // Load stuff
@@ -275,17 +281,24 @@ function CalculatorPage() {
         <PageContainer>
             <Steps
                 current={currentStepIndex}
-                items={stepList.map((item) => ({
-                    key: item.title,
-                    title: item.title,
-                }))}
+                items={stepList.map((item, i) => {
+                    const obj = {
+                        key: item.title,
+                        title: item.title,
+                    };
+
+                    if (isSimulationInProgress && i == stepList.length - 1)
+                        obj.icon = <LoadingOutlined />;
+
+                    return obj;
+                })}
                 style={{
                     marginBottom: 16,
                 }}
             />
             <div
                 style={{
-                    minHeight: 294,
+                    minHeight: 292,
                     background: token.colorBgLayout,
                     border: "1px solid " + token.colorBorderSecondary,
                     padding: 12,
@@ -301,7 +314,10 @@ function CalculatorPage() {
                     onClick={prevContent}
                     style={{ width: 82 }}
                     disabled={
-                        isLoading || isErrorOccured || currentStepIndex < 1
+                        isLoading ||
+                        isErrorOccured ||
+                        isSimulationInProgress ||
+                        currentStepIndex < 1
                     }
                 >
                     Previous
@@ -312,9 +328,15 @@ function CalculatorPage() {
                             ? startSimulation
                             : nextContent
                     }
-                    style={{ position: "absolute", width: 82, right: 0 }}
+                    style={{
+                        position: "absolute",
+                        width: 82,
+                        right: 0,
+                    }}
                     type="primary"
-                    disabled={isLoading || isErrorOccured}
+                    disabled={
+                        isLoading || isErrorOccured || isSimulationInProgress
+                    }
                 >
                     {currentStepIndex == stepList.length - 1
                         ? "Simulate"
