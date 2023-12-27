@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Menu } from "antd";
 import {
     CalculatorOutlined,
@@ -10,6 +10,7 @@ import HomePage from "./Pages/Home";
 import AboutPage from "./Pages/About";
 import CharacterListPage from "./Pages/CharacterList";
 import WeaponListPage from "./Pages/WeaponList";
+import { AppContext } from "./App";
 
 function menuItem(label, key, icon, page, children, type) {
     return {
@@ -49,7 +50,9 @@ const items = [
 ];
 
 function LeftMenu({ theme, setCurrentPage }) {
+    const { isSimulationInProgress, showMessage } = useContext(AppContext);
     const [openKeys, setOpenKeys] = useState(["calculator"]);
+    const [currentPageKey, setCurrentPageKey] = useState(items[0].key);
 
     const onOpenChange = (keys) => {
         const openMenuKey = keys.find((key) => openKeys.indexOf(key) === -1);
@@ -65,9 +68,16 @@ function LeftMenu({ theme, setCurrentPage }) {
     };
 
     const onSelect = (e) => {
-        const page = e.item.props.page;
+        if (isSimulationInProgress) {
+            showMessage("warning", "You cannot change pages while simulation is in-progress.");
+            return;
+        }
 
-        if (page !== undefined) setCurrentPage(page);
+        const page = e.item.props.page;
+        if (page !== undefined) {
+            setCurrentPage(page);
+            setCurrentPageKey(e.key);
+        }
     };
 
     return (
@@ -77,7 +87,7 @@ function LeftMenu({ theme, setCurrentPage }) {
             openKeys={openKeys}
             onOpenChange={onOpenChange}
             onSelect={onSelect}
-            defaultSelectedKeys={[items[0].key]}
+            selectedKeys={currentPageKey}
             theme={theme}
         />
     );
