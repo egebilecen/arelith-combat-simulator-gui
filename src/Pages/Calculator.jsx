@@ -15,6 +15,7 @@ import {
     Slider,
     Checkbox,
     InputNumber,
+    Progress,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { invoke } from "@tauri-apps/api";
@@ -28,6 +29,7 @@ function CalculatorPage() {
     const { isSimulationInProgress, setIsSimulationInProgress } =
         useContext(AppContext);
     const [configForm] = Form.useForm();
+    const [simulationForm] = Form.useForm();
     const [currentStepIndex, setCurrentContentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isErrorOccured, setIsErrorOccured] = useState(false);
@@ -36,6 +38,12 @@ function CalculatorPage() {
     const [characterList, setCharacterList] = useState([]);
     const [dummyAcRange, setDummyAcRange] = useState([35, 65]);
     const [simulationData, setSimulationData] = useState({});
+    const [simulationProgress, setSimulationProgress] = useState(0);
+    const [simulationLogText, setSimulationLogText] = useState(
+        "Waiting for simulation to start..."
+    );
+    const [simulationProgressBarStatus, setSimulationProgressBarStatus] =
+        useState("normal");
 
     const handleSelectUnselectAllCharacters = () => {
         if (isSelectingAll)
@@ -231,7 +239,57 @@ function CalculatorPage() {
         },
         {
             title: "Simulation",
-            content: "Last-content",
+            content: (
+                <>
+                    <Flex
+                        justify="center"
+                        align="center"
+                        style={{
+                            height: 265,
+                        }}
+                        vertical
+                    >
+                        <Form
+                            form={simulationForm}
+                            layout="vertical"
+                            requiredMark={false}
+                        >
+                            <Text
+                                style={{
+                                    display: "block",
+                                    textAlign: "center",
+                                    marginBottom: 2,
+                                }}
+                            >
+                                Number Of Rounds To Simulate
+                            </Text>
+                            <Form.Item
+                                name="simulation_rounds"
+                                initialValue={500000}
+                            >
+                                <InputNumber
+                                    style={{
+                                        width: "100%",
+                                    }}
+                                    min={1}
+                                    disabled={isSimulationInProgress}
+                                />
+                            </Form.Item>
+                        </Form>
+                        <Progress
+                            type="circle"
+                            percent={simulationProgress}
+                            status={simulationProgressBarStatus}
+                            style={{
+                                marginBottom: 6,
+                            }}
+                        />
+                        <Text style={{ display: "block", textAlign: "center" }}>
+                            {simulationLogText}
+                        </Text>
+                    </Flex>
+                </>
+            ),
         },
     ];
 
@@ -244,16 +302,36 @@ function CalculatorPage() {
             const values = await configForm.validateFields();
             setCurrentContentIndex(currentStepIndex + 1);
             setSimulationData(values);
-
-            console.log(values);
         } catch (errorInfo) {
             console.log("Failed:", errorInfo);
         }
     };
 
-    const startSimulation = () => {
+    const startSimulation = async () => {
+        const simulationRounds =
+            simulationForm.getFieldValue("simulation_rounds");
+
+        console.log(simulationRounds);
         console.log(simulationData);
+
         setIsSimulationInProgress(true);
+        setSimulationProgressBarStatus("normal");
+        setSimulationLogText("Simulation is starting...");
+
+        try {
+            await invoke("start_simulation", {
+                totalRounds: simulationRounds,
+            });
+        } catch (errorInfo) {
+            setIsSimulationInProgress(false);
+            setSimulationProgressBarStatus("exception");
+            setSimulationLogText(
+                <span>
+                    <Text strong>Error: </Text> {errorInfo}
+                </span>
+            );
+            console.error("Couldn't start simulation: ", errorInfo);
+        }
     };
 
     // Load stuff
