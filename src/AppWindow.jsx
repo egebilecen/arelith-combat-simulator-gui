@@ -40,11 +40,12 @@ const siderStyle = {
     borderBottomLeftRadius: windowConfig.borderRadius,
 };
 
-
 await appWindow.setSize(
     new LogicalSize(
         800 + windowConfig.innerPadding,
-        headerConfig.height + innerWindowConfig.height + windowConfig.innerPadding
+        headerConfig.height +
+            innerWindowConfig.height +
+            windowConfig.innerPadding
     )
 );
 
@@ -61,7 +62,7 @@ if (await invoke("is_debug")) {
     document.addEventListener("contextmenu", (event) => event.preventDefault());
 }
 
-function AppWindow( { themeStr } ) {
+function AppWindow({ themeStr }) {
     const { token } = theme.useToken();
     const [currentPage, setCurrentPage] = useState(<HomePage />);
 
@@ -79,15 +80,13 @@ function AppWindow( { themeStr } ) {
         <Layout
             style={{
                 borderRadius: windowConfig.borderRadius,
-                boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.20)",
             }}
         >
             <Header
                 data-tauri-drag-region
                 style={{
                     ...headerConfig,
-                    background:
-                        token.Header.custom.backgroundColor,
+                    background: token.Header.custom.backgroundColor,
                     padding: "0 8px 0 19px",
                     position: "relative",
                     borderTopLeftRadius: windowConfig.borderRadius,
