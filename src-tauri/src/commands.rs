@@ -30,7 +30,7 @@ impl<'a> SimulationUpdatePayload<'a> {
 #[derive(Clone, Serialize)]
 struct SimulationCharacterUpdatePayload {}
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn is_debug() -> bool {
     #[cfg(debug_assertions)]
     return true;
@@ -39,37 +39,37 @@ pub fn is_debug() -> bool {
     return false;
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_row_by_id(table: &str, id: i32) -> db::QueryResult<db::RowData> {
     db::get_row_by_id(table, id)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_rows(table: &str) -> db::QueryResult<Vec<db::RowData>> {
     db::get_rows(&table)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn insert_row(table: &str, name: &str, json: &str) -> db::QueryResult<i64> {
     db::insert_row(table, name, json)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn delete_row(table: &str, id: i32) -> db::QueryResult<usize> {
     db::delete_row(table, id)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn delete_all_rows(table: &str) -> db::QueryResult<usize> {
     db::delete_all_rows(table)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_base_weapons() -> HashMap<String, WeaponBase> {
     get_weapon_base_list()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn create_character(
     name: &str,
     size: &str,
@@ -107,7 +107,7 @@ pub fn create_character(
     builder.build()
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn create_weapon(
     name: &str,
     base_weapon: &str,
@@ -186,7 +186,7 @@ pub fn create_weapon(
     Weapon::new(name.to_string(), get_weapon_base(base_weapon), iprops)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn start_simulation(
     app: tauri::AppHandle,
     total_rounds: i32,
