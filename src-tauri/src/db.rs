@@ -17,38 +17,6 @@ pub struct QueryResult<T> {
     pub msg: String,
 }
 
-pub fn get_db() -> Connection {
-    Connection::open(DB_FILE).unwrap()
-}
-
-pub fn init_db() {
-    let conn = get_db();
-
-    _ = conn.execute(
-        "
-        CREATE TABLE IF NOT EXISTS `characters` (
-            `id`	INTEGER NOT NULL UNIQUE,
-            `name`	TEXT NOT NULL,
-            `json`	TEXT NOT NULL,
-            PRIMARY KEY(`id` AUTOINCREMENT)
-        );
-    ",
-        (),
-    );
-
-    _ = conn.execute(
-        "
-        CREATE TABLE IF NOT EXISTS `weapons` (
-            `id`	INTEGER NOT NULL UNIQUE,
-            `name`	TEXT NOT NULL,
-            `json`	TEXT NOT NULL,
-            PRIMARY KEY(`id` AUTOINCREMENT)
-        );
-    ",
-        (),
-    );
-}
-
 fn error_result<T>(err: Error) -> QueryResult<T>
 where
     T: Default,
@@ -58,6 +26,32 @@ where
         result: T::default(),
         msg: err.to_string(),
     }
+}
+
+fn get_create_table_sql(table: &str) -> String {
+    format!(
+        "
+    CREATE TABLE IF NOT EXISTS `{}` (
+        `id`	INTEGER NOT NULL UNIQUE,
+        `name`	TEXT NOT NULL,
+        `json`	TEXT NOT NULL,
+        PRIMARY KEY(`id` AUTOINCREMENT)
+    );
+",
+        table
+    )
+}
+
+pub fn get_db() -> Connection {
+    Connection::open(DB_FILE).unwrap()
+}
+
+pub fn init_db() {
+    let conn = get_db();
+
+    _ = conn.execute(get_create_table_sql("characters").as_str(), ());
+    _ = conn.execute(get_create_table_sql("weapons").as_str(), ());
+    _ = conn.execute(get_create_table_sql("simulation_results").as_str(), ());
 }
 
 pub fn get_row_by_id(table: &str, id: i32) -> QueryResult<RowData> {
