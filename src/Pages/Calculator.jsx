@@ -19,6 +19,7 @@ import {
     Checkbox,
     InputNumber,
     Progress,
+    Space,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { invoke } from "@tauri-apps/api";
@@ -114,16 +115,20 @@ function CalculatorPage() {
                                 name="characters"
                                 label={
                                     <>
-                                        <span>Characters</span>
-                                        <Divider type="vertical" />
-                                        <Typography.Link
-                                            onClick={
-                                                handleSelectUnselectAllCharacters
-                                            }
+                                        <Space
+                                            split={<Divider type="vertical" />}
+                                            size={0}
                                         >
-                                            {isSelectingAll ? "S" : "Uns"}elect
-                                            All
-                                        </Typography.Link>
+                                            <span>Characters</span>
+                                            <Typography.Link
+                                                onClick={
+                                                    handleSelectUnselectAllCharacters
+                                                }
+                                            >
+                                                {isSelectingAll ? "S" : "Uns"}
+                                                elect All
+                                            </Typography.Link>
+                                        </Space>
                                     </>
                                 }
                                 rules={[
@@ -174,12 +179,13 @@ function CalculatorPage() {
                                     let val2 = dummyAcRange[1];
 
                                     return (
-                                        <>
+                                        <Space
+                                            split={<Divider type="vertical" />}
+                                            size={0}
+                                        >
                                             <span>
                                                 AC
-                                                {val1 !== val2
-                                                    ? " Range"
-                                                    : ""}:{" "}
+                                                {val1 !== val2 ? " Range" : ""}:{" "}
                                                 <Text strong>
                                                     {val1 +
                                                         (val2 !== val1
@@ -187,7 +193,6 @@ function CalculatorPage() {
                                                             : "")}
                                                 </Text>
                                             </span>
-                                            <Divider type="vertical" />
                                             <Form.Item
                                                 name={[
                                                     "dummy",
@@ -201,7 +206,7 @@ function CalculatorPage() {
                                                     Has Epic Dodge
                                                 </Checkbox>
                                             </Form.Item>
-                                        </>
+                                        </Space>
                                     );
                                 })()}
                                 rules={[

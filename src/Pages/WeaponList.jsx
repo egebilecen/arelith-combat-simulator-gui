@@ -676,17 +676,28 @@ function WeaponListPage() {
                                                                     ]}
                                                                 >
                                                                     <Checkbox.Group>
-                                                                        <Checkbox value="can_crit">
-                                                                            Can
-                                                                            critical
-                                                                            hit
-                                                                        </Checkbox>
-
-                                                                        <Tooltip title="If damage is resistable, it will be affected from damage resistance, damage reduction, and damage immunity.">
-                                                                            <Checkbox value="resistable">
-                                                                                Resistable
+                                                                        <Space
+                                                                            split={
+                                                                                <Divider type="vertical" />
+                                                                            }
+                                                                            size={
+                                                                                0
+                                                                            }
+                                                                        >
+                                                                            <Checkbox value="can_crit">
+                                                                                Can
+                                                                                critical
+                                                                                hit
                                                                             </Checkbox>
-                                                                        </Tooltip>
+
+                                                                            <Tooltip title="If damage is resistable, it will be affected from damage resistance, damage reduction, and damage immunity.">
+                                                                                <Checkbox value="resistable" style={{
+                                                                                    marginLeft: 6
+                                                                                }}>
+                                                                                    Resistable
+                                                                                </Checkbox>
+                                                                            </Tooltip>
+                                                                        </Space>
                                                                     </Checkbox.Group>
                                                                 </Form.Item>
                                                             </Col>

@@ -17,7 +17,11 @@ import {
     Divider,
     Popconfirm,
 } from "antd";
-import { LoadingOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+    LoadingOutlined,
+    PlusOutlined,
+    DeleteOutlined,
+} from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
@@ -275,9 +279,11 @@ function CharacterListPage() {
                             <List.Item actions={actions}>
                                 <List.Item.Meta
                                     title={
-                                        <>
+                                        <Space
+                                            split={<Divider type="vertical" />}
+                                            size={0}
+                                        >
                                             <Text>{item.name}</Text>
-                                            <Divider type="vertical" />
                                             <span>
                                                 <Tooltip
                                                     title={
@@ -287,7 +293,10 @@ function CharacterListPage() {
                                                                 item.obj.feats.map(
                                                                     (e, i) => (
                                                                         <Col
-                                                                            key={"feat-" + i}
+                                                                            key={
+                                                                                "feat-" +
+                                                                                i
+                                                                            }
                                                                             span={
                                                                                 24
                                                                             }
@@ -329,7 +338,6 @@ function CharacterListPage() {
                                                     </Typography.Link>
                                                 </Tooltip>
                                             </span>
-                                            <Divider type="vertical" />
                                             <Text
                                                 type="secondary"
                                                 style={{
@@ -338,7 +346,7 @@ function CharacterListPage() {
                                             >
                                                 <b>Size:</b> {item.obj.size}
                                             </Text>
-                                        </>
+                                        </Space>
                                     }
                                     description={
                                         <Row gutter={16}>
@@ -610,7 +618,9 @@ function CharacterListPage() {
                                                         crit_mult +
                                                         ")",
                                                     value: weapon_row.id,
-                                                    title: getWeaponBaseStr(weapon_row.obj.base),
+                                                    title: getWeaponBaseStr(
+                                                        weapon_row.obj.base
+                                                    ),
                                                 };
                                             }
                                         )}
