@@ -5,12 +5,14 @@ import {
     TeamOutlined,
     UnorderedListOutlined,
     InfoCircleOutlined,
+    LineChartOutlined,
 } from "@ant-design/icons";
 import HomePage from "./Pages/Home";
 import AboutPage from "./Pages/About";
 import CharacterListPage from "./Pages/CharacterList";
 import WeaponListPage from "./Pages/WeaponList";
 import { AppContext } from "./App";
+import SimulationResultList from "./Pages/SimulationResultList";
 
 function menuItem(label, key, icon, page, children, type) {
     return {
@@ -26,23 +28,29 @@ function menuItem(label, key, icon, page, children, type) {
 const items = [
     menuItem("Simulator", "calculator", <CalculatorOutlined />, <HomePage />),
     menuItem(
-        "Character List",
+        "Characters",
         "character_list",
         <TeamOutlined />,
         <CharacterListPage />
     ),
     menuItem(
-        "Weapon List",
+        "Weapons",
         "weapon_list",
         <UnorderedListOutlined />,
         <WeaponListPage />
     ),
+    menuItem(
+        "Results",
+        "result_viewer",
+        <LineChartOutlined />,
+        <SimulationResultList />
+    ),
     menuItem("About", "about", <InfoCircleOutlined />, <AboutPage />),
 
-    // menuItem("Navigation Two", "sub2", <AppstoreOutlined />, [
+    // menuItem("Navigation Two", "sub2", null, null, [
     //     menuItem("Option 5", "5"),
     //     menuItem("Option 6", "6"),
-    //     menuItem("Submenu", "sub3", null, [
+    //     menuItem("Submenu", "sub3", null, null, [
     //         menuItem("Option 7", "7"),
     //         menuItem("Option 8", "8"),
     //     ]),
@@ -69,7 +77,10 @@ function LeftMenu({ theme, setCurrentPage }) {
 
     const onSelect = (e) => {
         if (isSimulationInProgress) {
-            showMessage("warning", "You cannot change pages while simulation is in-progress.");
+            showMessage(
+                "warning",
+                "You cannot change pages while simulation is in-progress."
+            );
             return;
         }
 
