@@ -43,7 +43,7 @@ function CharacterListPage() {
     };
 
     const handleDeleteAllCharatacterClick = async () => {
-        let res = await invoke("delete_all_rows", {
+        const res = await invoke("delete_all_rows", {
             table: "characters",
         });
 
@@ -59,7 +59,7 @@ function CharacterListPage() {
     };
 
     const handleDeleteCharacterClick = async (id) => {
-        let res = await invoke("delete_row", {
+        const res = await invoke("delete_row", {
             table: "characters",
             id: id,
         });
@@ -113,9 +113,9 @@ function CharacterListPage() {
                 features: values.features,
             });
 
-            let characterJsonStr = JSON.stringify(character);
+            const characterJsonStr = JSON.stringify(character);
 
-            let res = await invoke("insert_row", {
+            const res = await invoke("insert_row", {
                 table: "characters",
                 name: character.name,
                 json: characterJsonStr,

@@ -71,7 +71,7 @@ function WeaponListPage() {
     };
 
     const handleDeleteAllWeaponClick = async () => {
-        let res = await invoke("delete_all_rows", {
+        const res = await invoke("delete_all_rows", {
             table: "weapons",
         });
 
@@ -87,7 +87,7 @@ function WeaponListPage() {
     };
 
     const handleDeleteWeaponClick = async (id) => {
-        let res = await invoke("delete_row", {
+        const res = await invoke("delete_row", {
             table: "weapons",
             id: id,
         });
@@ -146,9 +146,9 @@ function WeaponListPage() {
                 itemProps: values.item_properties || [],
             });
 
-            let weaponJsonStr = JSON.stringify(weapon);
+            const weaponJsonStr = JSON.stringify(weapon);
 
-            let res = await invoke("insert_row", {
+            const res = await invoke("insert_row", {
                 table: "weapons",
                 name: weapon.name,
                 json: weaponJsonStr,
