@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Error};
 use serde::Serialize;
 
-pub static DB_FILE: &'static str = "./db";
+pub static DB_FILE: &'static str = "./db.sqlite3";
 
 #[derive(Serialize, Default)]
 pub struct RowData {

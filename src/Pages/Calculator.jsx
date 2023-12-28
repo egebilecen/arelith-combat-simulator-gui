@@ -31,6 +31,7 @@ const { Text } = Typography;
 let unlistenSimulationUpdate;
 
 function CalculatorPage() {
+    const { showMessage } = useContext(AppContext);
     const { token } = theme.useToken();
     const { isSimulationInProgress, setIsSimulationInProgress } =
         useContext(AppContext);
@@ -319,38 +320,90 @@ function CalculatorPage() {
     };
 
     const startSimulation = async () => {
-        unlistenSimulationUpdate = await listen("simulation_update", async (e) => {
-            let payload = e.payload;
-            console.log(payload);
+        unlistenSimulationUpdate = await listen(
+            "simulation_update",
+            async (e) => {
+                let payload = e.payload;
 
-            switch (payload.status) {
-                case "done":
-                    {
-                        setIsSimulationInProgress(false);
-                        setSimulationProgressBarStatus("success");
-                        setSimulationLogText("Simulation is completed!");
-                        unlistenSimulationUpdate();
+                switch (payload.status) {
+                    case "done":
+                        {
+                            const characters = characterList.filter(
+                                (e) => payload.details[e.id] !== undefined
+                            );
 
-                        sendNotification({
-                            title: await getName(),
-                            body: "Simulation is completed!"
-                        });
-                    }
-                    break;
+                            const result = characters.map((e) => {
+                                return {
+                                    character: {
+                                        name: e.name,
+                                        id: e.id,
+                                    },
+                                    result: payload.details[e.id],
+                                };
+                            });
 
-                case "working":
-                    {
-                        setSimulationProgress(simulationProgress.current + 1);
-                        forceRender();
-                    }
-                    break;
+                            const res = await invoke("insert_row", {
+                                table: "simulation_results",
+                                name: "v1",
+                                json: JSON.stringify({
+                                    timestamp: new Date().getTime(),
+                                    target_info: {
+                                        concealment:
+                                            simulationData.dummy.concealment,
+                                        has_epic_dodge:
+                                            simulationData.dummy.has_epic_dodge,
+                                        damage_immunity:
+                                            simulationData.dummy
+                                                .damage_immunity,
+                                        defensive_essence:
+                                            simulationData.dummy
+                                                .defensive_essence,
+                                    },
+                                    data: result,
+                                }),
+                            });
 
-                case "character_complete":
-                    {
-                    }
-                    break;
+                            if (!res.success) {
+                                showMessage(
+                                    "error",
+                                    "An error occured while saving the simulation result: " +
+                                        res.msg
+                                );
+                            }
+
+                            setIsSimulationInProgress(false);
+                            setSimulationProgressBarStatus("success");
+                            setSimulationLogText(
+                                "Simulation is completed! " +
+                                    (res.success
+                                        ? "Results are saved."
+                                        : "Couldn't save the results due to an error, though.")
+                            );
+                            unlistenSimulationUpdate();
+
+                            sendNotification({
+                                title: await getName(),
+                                body: "Simulation is completed!",
+                            });
+                        }
+                        break;
+
+                    case "working":
+                        {
+                            setSimulationProgress(
+                                simulationProgress.current + 1
+                            );
+                            forceRender();
+                        }
+                        break;
+
+                    case "character_complete":
+                        {
+                        }
+                        break;
+                }
             }
-        });
+        );
 
         setSimulationProgress(0);
         setIsSimulationInProgress(true);
