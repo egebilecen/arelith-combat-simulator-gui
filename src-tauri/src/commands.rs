@@ -7,7 +7,7 @@ use arelith::{
         weapon_db::{get_weapon_base, get_weapon_base_list},
         Damage, DamageType, ItemProperty, Weapon, WeaponBase,
     },
-    simulator::CombatSimulator,
+    simulator::{CombatSimulator, DamageTestResult},
     size::SizeCategory,
 };
 use serde::Serialize;
@@ -209,6 +209,8 @@ pub fn start_simulation(
 
     combat_simulator.set_damage_test_notifier(&callback_fn);
 
+    let mut simulation_results: HashMap<i32, DamageTestResult> = HashMap::new();
+
     for (id, character) in characters.iter() {
         let ac_list = dummy_ac_list.clone();
 
@@ -221,6 +223,8 @@ pub fn start_simulation(
             dummy_has_epic_dodge,
         );
 
+        simulation_results.insert(*id, result);
+
         let _ = app.emit_all(
             "simulation_update",
             SimulationUpdatePayload::new(
@@ -232,6 +236,9 @@ pub fn start_simulation(
 
     let _ = app.emit_all(
         "simulation_update",
-        SimulationUpdatePayload::new("done", None),
+        SimulationUpdatePayload::new(
+            "done",
+            Some(serde_json::to_value(simulation_results).unwrap()),
+        ),
     );
 }
