@@ -10,9 +10,21 @@ const { Text } = Typography;
 function SimulationResultList() {
     const [isLoading, setIsLoading] = useState(true);
     const [tableData, setTableData] = useState([]);
+    const [osLocale, setOsLocale] = useState([]);
 
     const textRenderer = (text) => <Text>{text}</Text>;
-    const dateRenderer = textRenderer;
+    const dateRenderer = (timestamp) => {
+        const date = new Date(timestamp);
+
+        return (
+            date.toLocaleDateString(osLocale) +
+            ", " +
+            date.toLocaleTimeString(osLocale, {
+                hour: "2-digit",
+                minute: "2-digit",
+            })
+        );
+    };
 
     const handleDeleteResult = (id) => {
         console.log(id);
