@@ -42,7 +42,7 @@ function CalculatorPage() {
     const [dummyAcRange, setDummyAcRange] = useState([35, 65]);
     const [simulationData, setSimulationData] = useState({});
     const [simulationLogText, setSimulationLogText] = useState(
-        "Waiting for simulation to start..."
+        "Waiting for simulation to be started..."
     );
     const [simulationProgressBarStatus, setSimulationProgressBarStatus] =
         useState("normal");
@@ -363,11 +363,14 @@ function CalculatorPage() {
             dummyAcRange.push(i);
         }
 
-        const characters = characterList
+        const characters = {};
+        characterList
             .filter((e) => simulationData.characters.indexOf(e.id) !== -1)
-            .map((e) => e.obj);
+            .map((e) => {
+                characters[e.id] = e.obj;
+            });
 
-        setSimulationTotalCombatCount(dummyAcRange.length * characters.length);
+        setSimulationTotalCombatCount(dummyAcRange.length * Object.keys(characters).length);
 
         try {
             await invoke("start_simulation", {

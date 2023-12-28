@@ -190,7 +190,7 @@ pub fn create_weapon(
 pub fn start_simulation(
     app: tauri::AppHandle,
     total_rounds: i32,
-    characters: Vec<Character>,
+    characters: HashMap<i32, Character>,
     dummy_ac_list: Vec<i32>,
     dummy_concealment: i32,
     dummy_has_epic_dodge: bool,
@@ -209,10 +209,10 @@ pub fn start_simulation(
 
     combat_simulator.set_damage_test_notifier(&callback_fn);
 
-    for character in characters {
+    for (id, character) in characters.iter() {
         let ac_list = dummy_ac_list.clone();
 
-        let _result = combat_simulator.damage_test(
+        let result = combat_simulator.damage_test(
             &character,
             ac_list,
             dummy_concealment,
