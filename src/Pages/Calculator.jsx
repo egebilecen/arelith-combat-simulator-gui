@@ -327,6 +327,7 @@ function CalculatorPage() {
                         setIsSimulationInProgress(false);
                         setSimulationProgressBarStatus("success");
                         setSimulationLogText("Simulation is completed!");
+                        unlistenSimulationUpdate();
                     }
                     break;
 
@@ -341,10 +342,6 @@ function CalculatorPage() {
                     {
                     }
                     break;
-            }
-
-            if (payload.status == "done") {
-                unlistenSimulationUpdate();
             }
         });
 
