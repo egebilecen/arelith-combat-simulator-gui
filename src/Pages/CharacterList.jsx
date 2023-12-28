@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import {
-    Spin,
     Button,
     Flex,
     Result,
@@ -18,7 +17,6 @@ import {
     Popconfirm,
 } from "antd";
 import {
-    LoadingOutlined,
     PlusOutlined,
     DeleteOutlined,
 } from "@ant-design/icons";
@@ -28,6 +26,7 @@ import { invoke } from "@tauri-apps/api";
 import WeaponStats from "../Components/WeaponStats";
 import { getWeaponBaseStr } from "../Util/weapon";
 import { AppContext } from "../App";
+import Loading from "../Components/Loading";
 
 const { Text } = Typography;
 
@@ -228,19 +227,7 @@ function CharacterListPage() {
                     </Button>
                 </Flex>
 
-                <Spin
-                    indicator={<LoadingOutlined />}
-                    tip="Loading..."
-                    spinning={isLoading}
-                >
-                    <p
-                        style={{
-                            display: isLoading === true ? "block" : "none",
-                        }}
-                    >
-                        &nbsp;
-                    </p>
-                </Spin>
+                <Loading loading={isLoading} />
 
                 <Result
                     style={{

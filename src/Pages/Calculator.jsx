@@ -1,5 +1,7 @@
+import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
+import { getName } from "@tauri-apps/api/app";
 import { sendNotification } from "@tauri-apps/api/notification";
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import {
@@ -10,7 +12,6 @@ import {
     Row,
     Col,
     Form,
-    Spin,
     Result,
     Select,
     Divider,
@@ -22,10 +23,9 @@ import {
     Space,
 } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { invoke } from "@tauri-apps/api";
 import PageContainer from "../Sections/PageContainer";
 import { AppContext } from "../App";
-import { getName } from "@tauri-apps/api/app";
+import Loading from "../Components/Loading";
 
 const { Text } = Typography;
 
@@ -82,22 +82,7 @@ function CalculatorPage() {
         {
             title: "Configuration",
             content: isLoading ? (
-                <Spin
-                    indicator={<LoadingOutlined />}
-                    tip="Loading..."
-                    spinning={isLoading}
-                    style={{
-                        marginTop: 100,
-                    }}
-                >
-                    <p
-                        style={{
-                            display: isLoading === true ? "block" : "none",
-                        }}
-                    >
-                        &nbsp;
-                    </p>
-                </Spin>
+                <Loading loading={isLoading} style={{ marginTop: 100 }} />
             ) : isErrorOccured ? (
                 <Result
                     style={{
@@ -185,7 +170,9 @@ function CalculatorPage() {
                                         >
                                             <span>
                                                 AC
-                                                {val1 !== val2 ? " Range" : ""}:{" "}
+                                                {val1 !== val2
+                                                    ? " Range"
+                                                    : ""}:{" "}
                                                 <Text strong>
                                                     {val1 +
                                                         (val2 !== val1

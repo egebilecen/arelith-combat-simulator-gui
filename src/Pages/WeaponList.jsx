@@ -1,6 +1,5 @@
 import { useEffect, useState, useContext } from "react";
 import {
-    Spin,
     Button,
     Flex,
     Result,
@@ -19,7 +18,6 @@ import {
     Popconfirm,
 } from "antd";
 import {
-    LoadingOutlined,
     PlusOutlined,
     MinusCircleOutlined,
     DeleteOutlined,
@@ -30,6 +28,7 @@ import ItemPropStats from "../Components/ItemPropStats";
 import { invoke } from "@tauri-apps/api";
 import { getWeaponBaseStr } from "../Util/weapon";
 import { AppContext } from "../App";
+import Loading from "../Components/Loading";
 
 const { Text } = Typography;
 
@@ -260,19 +259,7 @@ function WeaponListPage() {
                     </Button>
                 </Flex>
 
-                <Spin
-                    indicator={<LoadingOutlined />}
-                    tip="Loading..."
-                    spinning={isLoading}
-                >
-                    <p
-                        style={{
-                            display: isLoading === true ? "block" : "none",
-                        }}
-                    >
-                        &nbsp;
-                    </p>
-                </Spin>
+                <Loading loading={isLoading} />
 
                 <Result
                     style={{
