@@ -10,8 +10,8 @@ export const getDiceStr = (dice, removeD1 = false) => {
 
 export const getWeaponBaseStr = (weaponBase, setName = true) => {
     return (
-        (setName ? weaponBase.name + " " : "") +
-        "(" +
+        weaponBase.name +
+        " (" +
         getDiceStr(weaponBase.damage) +
         ", " +
         (weaponBase.threat_range < 20
@@ -24,5 +24,22 @@ export const getWeaponBaseStr = (weaponBase, setName = true) => {
 };
 
 export const getWeaponStr = (weapon) => {
-    return weapon.name + " " + getWeaponBaseStr(weapon.base, false);
+    const threatRange = weapon.item_properties.find(
+        (e) => e.ThreatRangeOverride !== undefined
+    ).ThreatRangeOverride;
+
+    const critMultiplier = weapon.item_properties.find(
+        (e) => e.CriticalMultiplierOverride !== undefined
+    ).CriticalMultiplierOverride;
+
+    return (
+        weapon.name +
+        " (" +
+        getDiceStr(weapon.base.damage) +
+        ", " +
+        (threatRange == 20 ? threatRange : threatRange + " - " + "20") +
+        ", x" +
+        critMultiplier +
+        ")"
+    );
 };

@@ -1,6 +1,6 @@
 import { Row, Col, Typography, Divider } from "antd";
 import ItemPropStats from "./ItemPropStats";
-import { getWeaponBaseStr } from "../Util/weapon";
+import { getWeaponStr, getWeaponBaseStr } from "../Util/weapon";
 
 const { Text } = Typography;
 
@@ -19,7 +19,11 @@ function WeaponStats({ weapon, width }) {
                         textAlign: "center",
                     }}
                 >
-                    {getWeaponBaseStr(weapon.base)}
+                    {getWeaponStr(weapon)}
+                    <br />
+                    <span style={{ color: "#bbb" }}>
+                        {getWeaponBaseStr(weapon.base)}
+                    </span>
                 </Text>
             </Col>
             <Divider
