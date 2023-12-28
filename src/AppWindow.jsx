@@ -73,6 +73,9 @@ if (await invoke("is_debug")) {
     document.addEventListener("contextmenu", (event) => event.preventDefault());
 }
 
+document.getElementById("root").style.maxHeight =
+    headerConfig.height + innerWindowConfig.height + "px";
+
 function AppWindow({ themeStr }) {
     const { token } = theme.useToken();
     const [currentPage, setCurrentPage] = useState(<HomePage />);
