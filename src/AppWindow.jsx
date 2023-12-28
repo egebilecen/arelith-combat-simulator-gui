@@ -5,6 +5,10 @@ import {
     currentMonitor,
     PhysicalPosition,
 } from "@tauri-apps/api/window";
+import {
+    isPermissionGranted,
+    requestPermission,
+} from "@tauri-apps/api/notification";
 import { useState } from "react";
 import { getVersion } from "@tauri-apps/api/app";
 import { ConfigProvider, Layout, Button, Flex, Typography, theme } from "antd";
@@ -14,8 +18,6 @@ import HomePage from "./Pages/Home";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
-
-const appVersion = await getVersion();
 
 const headerConfig = {
     height: 32,
@@ -39,6 +41,15 @@ const innerWindowConfig = {
 const siderStyle = {
     borderBottomLeftRadius: windowConfig.borderRadius,
 };
+
+const appVersion = await getVersion();
+
+let permissionGranted = await isPermissionGranted();
+
+if (!permissionGranted) {
+    const permission = await requestPermission();
+    permissionGranted = permission === "granted";
+}
 
 await appWindow.setSize(
     new LogicalSize(

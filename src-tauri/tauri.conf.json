@@ -26,6 +26,9 @@
                 "open": true,
                 "scope": [],
                 "sidecar": false
+            },
+            "notification": {
+                "all": true
             }
         },
         "bundle": {

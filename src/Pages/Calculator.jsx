@@ -1,5 +1,6 @@
 import { appWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
+import { sendNotification } from "@tauri-apps/api/notification";
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import {
     Steps,
@@ -23,6 +24,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { invoke } from "@tauri-apps/api";
 import PageContainer from "../Sections/PageContainer";
 import { AppContext } from "../App";
+import { getName } from "@tauri-apps/api/app";
 
 const { Text } = Typography;
 
@@ -317,7 +319,7 @@ function CalculatorPage() {
     };
 
     const startSimulation = async () => {
-        unlistenSimulationUpdate = await listen("simulation_update", (e) => {
+        unlistenSimulationUpdate = await listen("simulation_update", async (e) => {
             let payload = e.payload;
             console.log(payload);
 
@@ -328,6 +330,11 @@ function CalculatorPage() {
                         setSimulationProgressBarStatus("success");
                         setSimulationLogText("Simulation is completed!");
                         unlistenSimulationUpdate();
+
+                        sendNotification({
+                            title: await getName(),
+                            body: "Simulation is completed!"
+                        });
                     }
                     break;
 
@@ -367,7 +374,9 @@ function CalculatorPage() {
                 characters[e.id] = e.obj;
             });
 
-        setSimulationTotalCombatCount(dummyAcRange.length * Object.keys(characters).length);
+        setSimulationTotalCombatCount(
+            dummyAcRange.length * Object.keys(characters).length
+        );
 
         try {
             await invoke("start_simulation", {
