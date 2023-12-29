@@ -1,6 +1,6 @@
 import { Tooltip, Row, Col, Typography } from "antd";
 import { isValidElement } from "react";
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 export const LIST_SYMBOL = <>&#x2022;</>;
 
@@ -71,14 +71,14 @@ function HelpText({
             }
             placement={placement}
         >
-            <Typography.Link
+            <Link
                 style={{
                     cursor: "inherit",
                     fontWeight: "initial",
                 }}
             >
                 {props.children}
-            </Typography.Link>
+            </Link>
         </Tooltip>
     );
 }

@@ -26,7 +26,7 @@ import { AppContext } from "../App";
 import Loading from "../Components/Loading";
 import HelpText from "../Components/HelpText";
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 function CharacterListPage() {
     const { showMessage } = useContext(AppContext);
@@ -256,7 +256,7 @@ function CharacterListPage() {
                                 cancelText="No"
                                 placement="left"
                             >
-                                <a>delete</a>
+                                <Link type="danger">delete</Link>
                             </Popconfirm>,
                         ];
 

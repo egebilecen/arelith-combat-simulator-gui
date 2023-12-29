@@ -27,7 +27,7 @@ import PageContainer from "../Sections/PageContainer";
 import { AppContext } from "../App";
 import Loading from "../Components/Loading";
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 let unlistenSimulationUpdate;
 
@@ -105,14 +105,14 @@ function CalculatorPage() {
                                             size={0}
                                         >
                                             <span>Characters</span>
-                                            <Typography.Link
+                                            <Link
                                                 onClick={
                                                     handleSelectUnselectAllCharacters
                                                 }
                                             >
                                                 {isSelectingAll ? "S" : "Uns"}
                                                 elect All
-                                            </Typography.Link>
+                                            </Link>
                                         </Space>
                                     </>
                                 }

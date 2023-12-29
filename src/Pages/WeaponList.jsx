@@ -31,7 +31,7 @@ import { AppContext } from "../App";
 import Loading from "../Components/Loading";
 import HelpText from "../Components/HelpText";
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 const itemProperties = ["Damage Bonus", "Massive Critical"];
 
@@ -300,7 +300,7 @@ function WeaponListPage() {
                                 cancelText="No"
                                 placement="left"
                             >
-                                <a>delete</a>
+                                <Link type="danger">delete</Link>
                             </Popconfirm>,
                         ];
 
