@@ -9,7 +9,9 @@ function Loading({ loading, ...props }) {
             spinning={loading}
             {...props}
         >
-            <p>&nbsp;</p>
+            <p>
+                <span style={{ opacity: 0 }}>Loading</span>&nbsp;
+            </p>
         </Spin>
     ) : (
         <></>
