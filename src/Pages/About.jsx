@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Typography } from "antd";
 import PageContainer from "../Sections/PageContainer";
 
@@ -12,7 +11,7 @@ function AboutPage() {
                     display: "block",
                     margin: "auto",
                     width: 125,
-                    marginBottom: 10
+                    marginBottom: 10,
                 }}
                 src="EB_logo2.png"
                 alt="Logo"
@@ -24,9 +23,14 @@ function AboutPage() {
                 </a>
                 . It simulates each round in combat, then summarizes the
                 statistics. It is open-source software, which can be found{" "}
-                <a href="https://github.com/egebilecen/nwn-damage-calculator/tree/ui" target="_blank">here</a>. If you like
-                this application or find it useful, please consider leaving a
-                star ⭐ to the repo.
+                <a
+                    href="https://github.com/egebilecen/nwn-damage-calculator/tree/ui"
+                    target="_blank"
+                >
+                    here
+                </a>
+                . If you like this application or find it useful, please
+                consider leaving a star ⭐ to the repo.
             </Text>
         </PageContainer>
     );

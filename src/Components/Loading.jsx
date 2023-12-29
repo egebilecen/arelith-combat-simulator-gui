@@ -2,21 +2,17 @@ import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
 function Loading({ loading, ...props }) {
-    return (
+    return loading ? (
         <Spin
             indicator={<LoadingOutlined />}
             tip="Loading..."
             spinning={loading}
             {...props}
         >
-            <p
-                style={{
-                    display: loading === true ? "block" : "none",
-                }}
-            >
-                &nbsp;
-            </p>
+            <p>&nbsp;</p>
         </Spin>
+    ) : (
+        <></>
     );
 }
 

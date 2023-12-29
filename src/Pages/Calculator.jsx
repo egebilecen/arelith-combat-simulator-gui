@@ -85,9 +85,6 @@ function CalculatorPage() {
                 <Loading loading={isLoading} style={{ marginTop: 100 }} />
             ) : isErrorOccured ? (
                 <Result
-                    style={{
-                        display: isErrorOccured ? "block" : "none",
-                    }}
                     status="warning"
                     title="An error occured"
                     subTitle={errorText}

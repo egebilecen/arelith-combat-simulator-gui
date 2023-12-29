@@ -224,155 +224,154 @@ function WeaponListPage() {
     return (
         <>
             <PageContainer>
-                <Flex
-                    justify="end"
-                    style={{
-                        marginBottom: 10,
-                        display: isLoading || isErrorOccured ? "none" : "flex",
-                    }}
-                    gap="small"
-                >
-                    {weaponList.length > 1 && (
-                        <Popconfirm
-                            title="Warning"
-                            description="Are you sure to delete all weapons?"
-                            onConfirm={handleDeleteAllWeaponClick}
-                            okText="Yes"
-                            cancelText="No"
-                            placement="bottom"
-                        >
-                            <Button
-                                type="primary"
-                                icon={<DeleteOutlined />}
-                                danger
+                {!isLoading && !isErrorOccured && (
+                    <Flex justify="end" gap="small">
+                        {weaponList.length > 1 && (
+                            <Popconfirm
+                                title="Warning"
+                                description="Are you sure to delete all weapons?"
+                                onConfirm={handleDeleteAllWeaponClick}
+                                okText="Yes"
+                                cancelText="No"
+                                placement="bottom"
                             >
-                                Delete All
-                            </Button>
-                        </Popconfirm>
-                    )}
+                                <Button
+                                    type="primary"
+                                    icon={<DeleteOutlined />}
+                                    danger
+                                >
+                                    Delete All
+                                </Button>
+                            </Popconfirm>
+                        )}
 
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={handleNewWeaponClick}
-                    >
-                        New
-                    </Button>
-                </Flex>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={handleNewWeaponClick}
+                        >
+                            New
+                        </Button>
+                    </Flex>
+                )}
 
                 <Loading loading={isLoading} />
 
-                <Result
-                    style={{
-                        display: isErrorOccured ? "block" : "none",
-                    }}
-                    status="warning"
-                    title="An error occured"
-                    subTitle={errorText}
-                />
+                {isErrorOccured && (
+                    <Result
+                        status="warning"
+                        title="An error occured"
+                        subTitle={errorText}
+                    />
+                )}
 
-                <List
-                    key="weapon-list"
-                    style={{
-                        display: isLoading || isErrorOccured ? "none" : "block",
-                    }}
-                    itemLayout="horizontal"
-                    dataSource={weaponList}
-                    renderItem={(item) => {
-                        item.obj = JSON.parse(item.json);
+                {!isLoading && !isErrorOccured && (
+                    <List
+                        key="weapon-list"
+                        itemLayout="horizontal"
+                        dataSource={weaponList}
+                        renderItem={(item) => {
+                            item.obj = JSON.parse(item.json);
 
-                        const threatRange = item.obj.item_properties.find(
-                            (e) => e.ThreatRangeOverride !== undefined
-                        ).ThreatRangeOverride;
+                            const threatRange = item.obj.item_properties.find(
+                                (e) => e.ThreatRangeOverride !== undefined
+                            ).ThreatRangeOverride;
 
-                        const critMultiplier = item.obj.item_properties.find(
-                            (e) => e.CriticalMultiplierOverride !== undefined
-                        ).CriticalMultiplierOverride;
+                            const critMultiplier =
+                                item.obj.item_properties.find(
+                                    (e) =>
+                                        e.CriticalMultiplierOverride !==
+                                        undefined
+                                ).CriticalMultiplierOverride;
 
-                        const actions = [
-                            <Popconfirm
-                                title="Warning"
-                                description="Are you sure to delete this weapon?"
-                                onConfirm={() =>
-                                    handleDeleteWeaponClick(item.id)
-                                }
-                                okText="Yes"
-                                cancelText="No"
-                                placement="left"
-                            >
-                                <Link type="danger">delete</Link>
-                            </Popconfirm>,
-                        ];
+                            const actions = [
+                                <Popconfirm
+                                    title="Warning"
+                                    description="Are you sure to delete this weapon?"
+                                    onConfirm={() =>
+                                        handleDeleteWeaponClick(item.id)
+                                    }
+                                    okText="Yes"
+                                    cancelText="No"
+                                    placement="left"
+                                >
+                                    <Link type="danger">delete</Link>
+                                </Popconfirm>,
+                            ];
 
-                        return (
-                            <List.Item
-                                key={"weapon-" + item.id}
-                                actions={actions}
-                            >
-                                <List.Item.Meta
-                                    title={item.name}
-                                    description={
-                                        <Row gutter={16}>
-                                            {/* <Col span={2}>
+                            return (
+                                <List.Item
+                                    key={"weapon-" + item.id}
+                                    actions={actions}
+                                >
+                                    <List.Item.Meta
+                                        title={item.name}
+                                        description={
+                                            <Row gutter={16}>
+                                                {/* <Col span={2}>
                                                 <Text strong>ID </Text>
                                                 <br />
                                                 <Text>{item.id}</Text>
                                             </Col> */}
-                                            <Col span={6}>
-                                                <Text strong underline>
-                                                    Base Weapon
-                                                </Text>
-                                                <br />
-                                                <Text>
-                                                    {item.obj.base.name}
-                                                </Text>
-                                            </Col>
-                                            <Col span={6}>
-                                                <Text strong underline>
-                                                    Threat Range
-                                                </Text>
-                                                <br />
-                                                <Text>
-                                                    {threatRange == 20
-                                                        ? threatRange
-                                                        : threatRange +
-                                                          " - " +
-                                                          "20"}
-                                                </Text>
-                                            </Col>
-                                            <Col span={6}>
-                                                <Text strong underline>
-                                                    Crit. Multiplier
-                                                </Text>
-                                                <br />
-                                                <Text>x{critMultiplier}</Text>
-                                            </Col>
-                                            <Col span={6}>
-                                                <Text strong underline>
-                                                    Properties
-                                                </Text>
-                                                <br />
-                                                <HelpText
-                                                    items={[
-                                                        <ItemPropStats
-                                                            itemProperties={
-                                                                item.obj
-                                                                    .item_properties
-                                                            }
-                                                        />,
-                                                    ]}
-                                                >
-                                                    {item.obj.item_properties
-                                                        .length - 2}
-                                                </HelpText>
-                                            </Col>
-                                        </Row>
-                                    }
-                                />
-                            </List.Item>
-                        );
-                    }}
-                />
+                                                <Col span={6}>
+                                                    <Text strong underline>
+                                                        Base Weapon
+                                                    </Text>
+                                                    <br />
+                                                    <Text>
+                                                        {item.obj.base.name}
+                                                    </Text>
+                                                </Col>
+                                                <Col span={6}>
+                                                    <Text strong underline>
+                                                        Threat Range
+                                                    </Text>
+                                                    <br />
+                                                    <Text>
+                                                        {threatRange == 20
+                                                            ? threatRange
+                                                            : threatRange +
+                                                              " - " +
+                                                              "20"}
+                                                    </Text>
+                                                </Col>
+                                                <Col span={6}>
+                                                    <Text strong underline>
+                                                        Crit. Multiplier
+                                                    </Text>
+                                                    <br />
+                                                    <Text>
+                                                        x{critMultiplier}
+                                                    </Text>
+                                                </Col>
+                                                <Col span={6}>
+                                                    <Text strong underline>
+                                                        Properties
+                                                    </Text>
+                                                    <br />
+                                                    <HelpText
+                                                        items={[
+                                                            <ItemPropStats
+                                                                itemProperties={
+                                                                    item.obj
+                                                                        .item_properties
+                                                                }
+                                                            />,
+                                                        ]}
+                                                    >
+                                                        {item.obj
+                                                            .item_properties
+                                                            .length - 2}
+                                                    </HelpText>
+                                                </Col>
+                                            </Row>
+                                        }
+                                    />
+                                </List.Item>
+                            );
+                        }}
+                    />
+                )}
 
                 <Drawer
                     title="Create a new weapon"

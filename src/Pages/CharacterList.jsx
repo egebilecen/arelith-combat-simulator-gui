@@ -189,163 +189,164 @@ function CharacterListPage() {
     return (
         <>
             <PageContainer>
-                <Flex
-                    justify="end"
-                    style={{
-                        marginBottom: 10,
-                        display: isLoading || isErrorOccured ? "none" : "flex",
-                    }}
-                    gap="small"
-                >
-                    {characterList.length > 1 && (
-                        <Popconfirm
-                            title="Warning"
-                            description="Are you sure to delete all characters?"
-                            onConfirm={handleDeleteAllCharatacterClick}
-                            okText="Yes"
-                            cancelText="No"
-                            placement="bottom"
-                        >
-                            <Button
-                                type="primary"
-                                icon={<DeleteOutlined />}
-                                danger
-                            >
-                                Delete All
-                            </Button>
-                        </Popconfirm>
-                    )}
-
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={handleNewCharacterClick}
+                {!isLoading && !isErrorOccured && (
+                    <Flex
+                        justify="end"
+                        gap="small"
                     >
-                        New
-                    </Button>
-                </Flex>
+                        {characterList.length > 1 && (
+                            <Popconfirm
+                                title="Warning"
+                                description="Are you sure to delete all characters?"
+                                onConfirm={handleDeleteAllCharatacterClick}
+                                okText="Yes"
+                                cancelText="No"
+                                placement="bottom"
+                            >
+                                <Button
+                                    type="primary"
+                                    icon={<DeleteOutlined />}
+                                    danger
+                                >
+                                    Delete All
+                                </Button>
+                            </Popconfirm>
+                        )}
+
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={handleNewCharacterClick}
+                        >
+                            New
+                        </Button>
+                    </Flex>
+                )}
 
                 <Loading loading={isLoading} />
 
-                <Result
-                    style={{
-                        display: isErrorOccured ? "block" : "none",
-                    }}
-                    status="warning"
-                    title="An error occured"
-                    subTitle={errorText}
-                />
+                {isErrorOccured && (
+                    <Result
+                        status="warning"
+                        title="An error occured"
+                        subTitle={errorText}
+                    />
+                )}
 
-                <List
-                    style={{
-                        display: isLoading || isErrorOccured ? "none" : "block",
-                    }}
-                    itemLayout="horizontal"
-                    dataSource={characterList}
-                    renderItem={(item) => {
-                        item.obj = JSON.parse(item.json);
+                {!isLoading && !isErrorOccured && (
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={characterList}
+                        renderItem={(item) => {
+                            item.obj = JSON.parse(item.json);
 
-                        const actions = [
-                            <Popconfirm
-                                title="Warning"
-                                description="Are you sure to delete this character?"
-                                onConfirm={() =>
-                                    handleDeleteCharacterClick(item.id)
-                                }
-                                okText="Yes"
-                                cancelText="No"
-                                placement="left"
-                            >
-                                <Link type="danger">delete</Link>
-                            </Popconfirm>,
-                        ];
+                            const actions = [
+                                <Popconfirm
+                                    title="Warning"
+                                    description="Are you sure to delete this character?"
+                                    onConfirm={() =>
+                                        handleDeleteCharacterClick(item.id)
+                                    }
+                                    okText="Yes"
+                                    cancelText="No"
+                                    placement="left"
+                                >
+                                    <Link type="danger">delete</Link>
+                                </Popconfirm>,
+                            ];
 
-                        return (
-                            <List.Item actions={actions}>
-                                <List.Item.Meta
-                                    title={
-                                        <Space
-                                            split={<Divider type="vertical" />}
-                                            size={0}
-                                        >
-                                            <Text>{item.name}</Text>
-                                            <span>
-                                                <HelpText
-                                                    items={item.obj.feats}
-                                                    emptyText="This character has no features."
-                                                >
-                                                    {item.obj.feats.length}{" "}
-                                                    Feature
-                                                </HelpText>
-                                            </span>
-                                            <Text
-                                                type="secondary"
-                                                style={{
-                                                    fontWeight: "normal",
-                                                }}
+                            return (
+                                <List.Item actions={actions}>
+                                    <List.Item.Meta
+                                        title={
+                                            <Space
+                                                split={
+                                                    <Divider type="vertical" />
+                                                }
+                                                size={0}
                                             >
-                                                <b>Size:</b> {item.obj.size}
-                                            </Text>
-                                        </Space>
-                                    }
-                                    description={
-                                        <Row gutter={16}>
-                                            <Col span={2}>
-                                                <Text strong underline>
-                                                    AB
-                                                </Text>
-                                                <br />
-                                                <Text>{item.obj.ab}</Text>
-                                            </Col>
-                                            <Col span={3}>
-                                                <Text strong underline>
-                                                    STR
-                                                </Text>
-                                                <br />
-                                                <Text>
-                                                    {item.obj.abilities.str}
-                                                </Text>
-                                            </Col>
-                                            <Col span={5}>
-                                                <Text strong underline>
-                                                    Base APR
-                                                </Text>
-                                                <br />
-                                                <Text>{item.obj.base_apr}</Text>
-                                            </Col>
-                                            <Col span={5}>
-                                                <Text strong underline>
-                                                    Extra APR
-                                                </Text>
-                                                <br />
-                                                <Text>
-                                                    {item.obj.extra_apr}
-                                                </Text>
-                                            </Col>
-                                            <Col flex="auto">
-                                                <Text strong underline>
-                                                    Weapon
-                                                </Text>
-                                                <br />
-                                                <HelpText
-                                                    items={[
-                                                        <WeaponStats
-                                                            weapon={
-                                                                item.obj.weapon
-                                                            }
-                                                        />,
-                                                    ]}
+                                                <Text>{item.name}</Text>
+                                                <span>
+                                                    <HelpText
+                                                        items={item.obj.feats}
+                                                        emptyText="This character has no features."
+                                                    >
+                                                        {item.obj.feats.length}{" "}
+                                                        Feature
+                                                    </HelpText>
+                                                </span>
+                                                <Text
+                                                    type="secondary"
+                                                    style={{
+                                                        fontWeight: "normal",
+                                                    }}
                                                 >
-                                                    {item.obj.weapon.name}
-                                                </HelpText>
-                                            </Col>
-                                        </Row>
-                                    }
-                                />
-                            </List.Item>
-                        );
-                    }}
-                />
+                                                    <b>Size:</b> {item.obj.size}
+                                                </Text>
+                                            </Space>
+                                        }
+                                        description={
+                                            <Row gutter={16}>
+                                                <Col span={2}>
+                                                    <Text strong underline>
+                                                        AB
+                                                    </Text>
+                                                    <br />
+                                                    <Text>{item.obj.ab}</Text>
+                                                </Col>
+                                                <Col span={3}>
+                                                    <Text strong underline>
+                                                        STR
+                                                    </Text>
+                                                    <br />
+                                                    <Text>
+                                                        {item.obj.abilities.str}
+                                                    </Text>
+                                                </Col>
+                                                <Col span={5}>
+                                                    <Text strong underline>
+                                                        Base APR
+                                                    </Text>
+                                                    <br />
+                                                    <Text>
+                                                        {item.obj.base_apr}
+                                                    </Text>
+                                                </Col>
+                                                <Col span={5}>
+                                                    <Text strong underline>
+                                                        Extra APR
+                                                    </Text>
+                                                    <br />
+                                                    <Text>
+                                                        {item.obj.extra_apr}
+                                                    </Text>
+                                                </Col>
+                                                <Col flex="auto">
+                                                    <Text strong underline>
+                                                        Weapon
+                                                    </Text>
+                                                    <br />
+                                                    <HelpText
+                                                        items={[
+                                                            <WeaponStats
+                                                                weapon={
+                                                                    item.obj
+                                                                        .weapon
+                                                                }
+                                                            />,
+                                                        ]}
+                                                    >
+                                                        {item.obj.weapon.name}
+                                                    </HelpText>
+                                                </Col>
+                                            </Row>
+                                        }
+                                    />
+                                </List.Item>
+                            );
+                        }}
+                    />
+                )}
 
                 <Drawer
                     title="Create a new character"

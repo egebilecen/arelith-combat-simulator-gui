@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PageContainer from "../Sections/PageContainer";
 
 function EmptyPage() {
