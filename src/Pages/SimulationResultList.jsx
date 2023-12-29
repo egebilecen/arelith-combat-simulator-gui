@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 import { Table } from "antd";
-import { Typography, Space, Divider, Popconfirm, Row, Col } from "antd";
+import { Typography, Space, Divider, Popconfirm, Row, Col, Result } from "antd";
 import PageContainer from "../Sections/PageContainer";
 import Loading from "../Components/Loading";
 import HelpText, { LIST_SYMBOL } from "../Components/HelpText";
@@ -13,6 +13,8 @@ function SimulationResultList() {
     const [isLoading, setIsLoading] = useState(true);
     const [tableData, setTableData] = useState([]);
     const [osLocale, setOsLocale] = useState([]);
+    const [isErrorOccured, setIsErrorOccured] = useState(false);
+    const [errorText, setErrorText] = useState("Unknown");
 
     const textRenderer = (text) => <Text>{text}</Text>;
     const dateRenderer = (timestamp) => {
@@ -136,7 +138,9 @@ function SimulationResultList() {
             setIsLoading(false);
 
             if (!results.success) {
-                // TODO
+                setErrorText(results.msg);
+                setIsErrorOccured(true);
+                return;
             }
 
             setTableData(
@@ -153,11 +157,16 @@ function SimulationResultList() {
         func();
     }, []);
 
-    console.log(tableData);
-
-    return isLoading ? (
+    return isLoading || isErrorOccured ? (
         <PageContainer>
-            <Loading loading={isLoading} />
+            {isLoading && <Loading loading={isLoading} />}
+            {isErrorOccured && (
+                <Result
+                    status="warning"
+                    title="An error occured"
+                    subTitle={errorText}
+                />
+            )}
         </PageContainer>
     ) : (
         <Table
