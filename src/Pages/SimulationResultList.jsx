@@ -1,7 +1,17 @@
 import { invoke } from "@tauri-apps/api";
 import { useEffect, useState, useContext } from "react";
 import { Table } from "antd";
-import { Typography, Space, Divider, Popconfirm, Row, Col, Result } from "antd";
+import {
+    Typography,
+    Space,
+    Divider,
+    Popconfirm,
+    Row,
+    Col,
+    Result,
+    Button,
+} from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import PageContainer from "../Sections/PageContainer";
 import Loading from "../Components/Loading";
 import HelpText, { LIST_SYMBOL } from "../Components/HelpText";
@@ -45,6 +55,22 @@ function SimulationResultList() {
             showMessage(
                 "error",
                 "An error occured while deleting the record: " + res.msg
+            );
+        }
+    };
+
+    const handleDeleteAllRecord = async () => {
+        const res = await invoke("delete_all_rows", {
+            table: "simulation_results",
+        });
+
+        if (res.success) {
+            showMessage("success", "All records are successfully deleted.");
+            setTableData([]);
+        } else {
+            showMessage(
+                "error",
+                "An error occured while deleting all records: " + res.msg
             );
         }
     };
@@ -184,11 +210,36 @@ function SimulationResultList() {
             )}
         </PageContainer>
     ) : (
-        <Table
-            pagination={{ pageSize: 6, style: { marginBottom: 0 } }}
-            columns={cols}
-            dataSource={tableData}
-        />
+        <div style={{ position: "relative" }}>
+            <Table
+                pagination={{
+                    pageSize: 6,
+                    showSizeChanger: false,
+                    style: { marginBottom: 0, paddingLeft: 126 },
+                }}
+                columns={cols}
+                dataSource={tableData}
+            />
+            {tableData.length > 1 && (
+                <Popconfirm
+                    title="Warning"
+                    description="Are you sure to delete all records?"
+                    onConfirm={handleDeleteAllRecord}
+                    okText="Yes"
+                    cancelText="No"
+                    placement="top"
+                >
+                    <Button
+                        type="primary"
+                        icon={<DeleteOutlined />}
+                        style={{ position: "absolute", left: 0, bottom: 0 }}
+                        danger
+                    >
+                        Delete All
+                    </Button>
+                </Popconfirm>
+            )}
+        </div>
     );
 }
 
