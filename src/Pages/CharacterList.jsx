@@ -16,10 +16,7 @@ import {
     Divider,
     Popconfirm,
 } from "antd";
-import {
-    PlusOutlined,
-    DeleteOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import Drawer from "../Components/Drawer";
 import PageContainer from "../Sections/PageContainer";
 import { invoke } from "@tauri-apps/api";
@@ -27,6 +24,7 @@ import WeaponStats from "../Components/WeaponStats";
 import { getWeaponBaseStr } from "../Util/weapon";
 import { AppContext } from "../App";
 import Loading from "../Components/Loading";
+import HelpText from "../Components/HelpText";
 
 const { Text } = Typography;
 
@@ -272,58 +270,13 @@ function CharacterListPage() {
                                         >
                                             <Text>{item.name}</Text>
                                             <span>
-                                                <Tooltip
-                                                    title={
-                                                        <Row>
-                                                            {item.obj.feats
-                                                                .length > 0 ? (
-                                                                item.obj.feats.map(
-                                                                    (e, i) => (
-                                                                        <Col
-                                                                            key={
-                                                                                "feat-" +
-                                                                                i
-                                                                            }
-                                                                            span={
-                                                                                24
-                                                                            }
-                                                                        >
-                                                                            <Text
-                                                                                style={{
-                                                                                    color: "inherit",
-                                                                                }}
-                                                                            >
-                                                                                &#x2022;{" "}
-                                                                                {
-                                                                                    e
-                                                                                }
-                                                                            </Text>
-                                                                        </Col>
-                                                                    )
-                                                                )
-                                                            ) : (
-                                                                <Col span={24}>
-                                                                    This
-                                                                    character
-                                                                    has no
-                                                                    features.
-                                                                </Col>
-                                                            )}
-                                                        </Row>
-                                                    }
-                                                    placement="bottom"
+                                                <HelpText
+                                                    items={item.obj.feats}
+                                                    emptyText="This character has no features."
                                                 >
-                                                    <Typography.Link
-                                                        style={{
-                                                            cursor: "inherit",
-                                                            fontWeight:
-                                                                "initial",
-                                                        }}
-                                                    >
-                                                        {item.obj.feats.length}{" "}
-                                                        Feature
-                                                    </Typography.Link>
-                                                </Tooltip>
+                                                    {item.obj.feats.length}{" "}
+                                                    Feature
+                                                </HelpText>
                                             </span>
                                             <Text
                                                 type="secondary"
@@ -374,23 +327,17 @@ function CharacterListPage() {
                                                     Weapon
                                                 </Text>
                                                 <br />
-                                                <Tooltip
-                                                    title={
+                                                <HelpText
+                                                    items={[
                                                         <WeaponStats
                                                             weapon={
                                                                 item.obj.weapon
                                                             }
-                                                        />
-                                                    }
+                                                        />,
+                                                    ]}
                                                 >
-                                                    <Typography.Link
-                                                        style={{
-                                                            cursor: "inherit",
-                                                        }}
-                                                    >
-                                                        {item.obj.weapon.name}
-                                                    </Typography.Link>
-                                                </Tooltip>
+                                                    {item.obj.weapon.name}
+                                                </HelpText>
                                             </Col>
                                         </Row>
                                     }

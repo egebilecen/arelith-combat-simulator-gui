@@ -29,6 +29,7 @@ import { invoke } from "@tauri-apps/api";
 import { getWeaponBaseStr } from "../Util/weapon";
 import { AppContext } from "../App";
 import Loading from "../Components/Loading";
+import HelpText from "../Components/HelpText";
 
 const { Text } = Typography;
 
@@ -351,26 +352,19 @@ function WeaponListPage() {
                                                     Properties
                                                 </Text>
                                                 <br />
-                                                <Tooltip
-                                                    title={
+                                                <HelpText
+                                                    items={[
                                                         <ItemPropStats
                                                             itemProperties={
                                                                 item.obj
                                                                     .item_properties
                                                             }
-                                                        />
-                                                    }
+                                                        />,
+                                                    ]}
                                                 >
-                                                    <Typography.Link
-                                                        style={{
-                                                            cursor: "inherit",
-                                                        }}
-                                                    >
-                                                        {item.obj
-                                                            .item_properties
-                                                            .length - 2}
-                                                    </Typography.Link>
-                                                </Tooltip>
+                                                    {item.obj.item_properties
+                                                        .length - 2}
+                                                </HelpText>
                                             </Col>
                                         </Row>
                                     }
@@ -678,9 +672,12 @@ function WeaponListPage() {
                                                                             </Checkbox>
 
                                                                             <Tooltip title="If damage is resistable, it will be affected from damage resistance, damage reduction, and damage immunity.">
-                                                                                <Checkbox value="resistable" style={{
-                                                                                    marginLeft: 6
-                                                                                }}>
+                                                                                <Checkbox
+                                                                                    value="resistable"
+                                                                                    style={{
+                                                                                        marginLeft: 6,
+                                                                                    }}
+                                                                                >
                                                                                     Resistable
                                                                                 </Checkbox>
                                                                             </Tooltip>
