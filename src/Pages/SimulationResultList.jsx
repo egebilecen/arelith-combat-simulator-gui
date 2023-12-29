@@ -106,6 +106,15 @@ function SimulationResultList() {
                                 <Col span={24}>
                                     {LIST_SYMBOL}{" "}
                                     <Text style={{ color: "inherit" }} strong>
+                                        AC:{" "}
+                                    </Text>
+                                    {Object.keys(
+                                        record.obj.data[0].result.statistics
+                                    ).join(", ")}
+                                </Col>
+                                <Col span={24}>
+                                    {LIST_SYMBOL}{" "}
+                                    <Text style={{ color: "inherit" }} strong>
                                         Concealment:{" "}
                                     </Text>
                                     {record.obj.target_info.concealment}%
