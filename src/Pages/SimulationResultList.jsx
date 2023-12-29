@@ -1,11 +1,13 @@
 import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 import { Table } from "antd";
-import { Typography, Space, Divider, Popconfirm } from "antd";
+import { Typography, Space, Divider, Popconfirm, Row, Col } from "antd";
 import PageContainer from "../Sections/PageContainer";
 import Loading from "../Components/Loading";
+import HelpText, { LIST_SYMBOL } from "../Components/HelpText";
+import TooltipDivider from "../Components/TooltipDivider";
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 function SimulationResultList() {
     const [isLoading, setIsLoading] = useState(true);
@@ -45,6 +47,54 @@ function SimulationResultList() {
             sorter: (a, b) => a.obj.timestamp - b.obj.timestamp,
         },
         {
+            title: "Details",
+            render: (_, record) => (
+                <HelpText
+                    header={record.obj.data[0].result.total_rounds + " Rounds"}
+                    items={record.obj.data.map((e) => e.character.name)}
+                    footer={
+                        <>
+                            <TooltipDivider title="Target Information" />
+                            <Row>
+                                <Col span={24}>
+                                    {LIST_SYMBOL}{" "}
+                                    <Text style={{ color: "inherit" }} strong>
+                                        Concealment:{" "}
+                                    </Text>
+                                    {record.obj.target_info.concealment}%
+                                </Col>
+                                <Col span={24}>
+                                    {LIST_SYMBOL}{" "}
+                                    <Text style={{ color: "inherit" }} strong>
+                                        Damage Immunity:{" "}
+                                    </Text>
+                                    {record.obj.target_info.damage_immunity}%
+                                </Col>
+                                <Col span={24}>
+                                    {LIST_SYMBOL}{" "}
+                                    <Text style={{ color: "inherit" }} strong>
+                                        Defensive Essence:{" "}
+                                    </Text>
+                                    {record.obj.target_info.defensive_essence}
+                                </Col>
+                                <Col span={24}>
+                                    {LIST_SYMBOL}{" "}
+                                    <Text style={{ color: "inherit" }} strong>
+                                        Has Epic Dodge:{" "}
+                                    </Text>
+                                    {record.obj.target_info.has_epic_dodge
+                                        ? "Yes"
+                                        : "No"}
+                                </Col>
+                            </Row>
+                        </>
+                    }
+                >
+                    Combat Information
+                </HelpText>
+            ),
+        },
+        {
             title: "Action",
             dataIndex: "action",
             render: (_, record) => (
@@ -57,8 +107,9 @@ function SimulationResultList() {
                         cancelText="No"
                         placement="left"
                     >
-                        <a>delete</a>
+                        <Link type="danger">delete</Link>
                     </Popconfirm>
+                    <Link type="success">view</Link>
                 </Space>
             ),
         },
