@@ -17,3 +17,15 @@ body {
     overflow: hidden;
     box-shadow: 0px 0px 12px 0px rgba(0,0,0,0.20);
 }
+
+th.ant-table-column-sort {
+    background: #fafafa !important;
+}
+
+th.ant-table-column-sort:hover {
+    background: #f0f0f0 !important;
+}
+
+.ant-table-column-sort {
+    background: inherit !important;
+}

@@ -34,12 +34,15 @@ function SimulationResultList() {
         {
             title: "ID",
             dataIndex: "id",
+            defaultSortOrder: "descend",
             render: textRenderer,
+            sorter: (a, b) => a.id - b.id,
         },
         {
             title: "Date",
             dataIndex: ["obj", "timestamp"],
             render: dateRenderer,
+            sorter: (a, b) => a.obj.timestamp - b.obj.timestamp,
         },
         {
             title: "Action",
@@ -97,7 +100,11 @@ function SimulationResultList() {
             <Loading loading={isLoading} />
         </PageContainer>
     ) : (
-        <Table columns={cols} dataSource={tableData} />
+        <Table
+            pagination={{ pageSize: 6, style: { marginBottom: 0 } }}
+            columns={cols}
+            dataSource={tableData}
+        />
     );
 }
 
