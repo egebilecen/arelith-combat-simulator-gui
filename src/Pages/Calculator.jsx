@@ -206,7 +206,7 @@ function CalculatorPage() {
                                     range
                                     tooltip={{ placement: "bottom" }}
                                     step={5}
-                                    min={0}
+                                    min={10}
                                     max={80}
                                     dots
                                     onChange={handleAcRangeChange}
