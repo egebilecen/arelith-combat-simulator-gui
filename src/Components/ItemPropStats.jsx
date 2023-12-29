@@ -1,10 +1,11 @@
 import { Col, Row, Typography } from "antd";
 import { getDiceStr } from "../Util/weapon";
+import { LIST_SYMBOL } from "./HelpText";
 
 const { Text } = Typography;
 
 function ItemPropStats({ itemProperties, width }) {
-    let listSymbol = <>&#x2022; </>;
+    let listSymbol = <>{LIST_SYMBOL} </>;
     const itemProps = itemProperties
         .filter(
             (iprop, i) =>

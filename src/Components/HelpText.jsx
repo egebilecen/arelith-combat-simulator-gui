@@ -2,6 +2,8 @@ import { Tooltip, Row, Col, Typography } from "antd";
 import { isValidElement } from "react";
 const { Text } = Typography;
 
+export const LIST_SYMBOL = <>&#x2022;</>;
+
 function HelpText({
     header,
     items,
@@ -12,7 +14,7 @@ function HelpText({
     ...props
 }) {
     items ??= [];
-    listSymbol ??= <>&#x2022; </>;
+    listSymbol ??= <>{LIST_SYMBOL} </>;
     placement ??= "bottom";
 
     return (
