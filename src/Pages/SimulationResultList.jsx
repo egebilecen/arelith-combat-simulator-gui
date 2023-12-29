@@ -17,6 +17,7 @@ import Loading from "../Components/Loading";
 import HelpText, { LIST_SYMBOL } from "../Components/HelpText";
 import TooltipDivider from "../Components/TooltipDivider";
 import { AppContext } from "../App";
+import { createWindow, windows } from "../Util/window";
 
 const { Text, Link } = Typography;
 
@@ -75,8 +76,8 @@ function SimulationResultList() {
         }
     };
 
-    const handleViewRecordClick = (record) => {
-        console.log(record);
+    const handleViewRecordClick = (id, record) => {
+        createWindow("result-viewer-" + id, windows.result_viewer, record);
     };
 
     const cols = [
@@ -167,7 +168,9 @@ function SimulationResultList() {
                     </Popconfirm>
                     <Link
                         type="success"
-                        onClick={() => handleViewRecordClick(record.obj)}
+                        onClick={() =>
+                            handleViewRecordClick(record.id, record.obj)
+                        }
                     >
                         view
                     </Link>
