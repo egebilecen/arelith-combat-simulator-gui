@@ -4,6 +4,7 @@ import { getDiceStr } from "../Util/weapon";
 const { Text } = Typography;
 
 function ItemPropStats({ itemProperties, width }) {
+    let listSymbol = <>&#x2022; </>;
     const itemProps = itemProperties
         .filter(
             (iprop, i) =>
@@ -43,7 +44,10 @@ function ItemPropStats({ itemProperties, width }) {
             }
         });
 
-    if (itemProps.length < 1) itemProps.push("This weapon has no properties.");
+    if (itemProps.length < 1) {
+        listSymbol = "";
+        itemProps.push("This weapon has no properties.");
+    }
 
     return (
         <Row
@@ -53,7 +57,8 @@ function ItemPropStats({ itemProperties, width }) {
         >
             {itemProps.map((iprop, i) => (
                 <Col key={"iprop-" + i} span={24}>
-                    &#x2022; {iprop}
+                    {listSymbol}
+                    {iprop}
                 </Col>
             ))}
         </Row>
