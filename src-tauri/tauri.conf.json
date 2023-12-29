@@ -18,7 +18,8 @@
                 "close": true,
                 "minimize": true,
                 "startDragging": true,
-                "setPosition": true
+                "setPosition": true,
+                "create": true
             },
             "shell": {
                 "all": false,
