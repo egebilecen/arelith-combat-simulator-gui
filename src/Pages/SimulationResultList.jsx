@@ -28,8 +28,12 @@ function SimulationResultList() {
         );
     };
 
-    const handleDeleteResult = (id) => {
+    const handleDeleteRecord = (id) => {
         console.log(id);
+    };
+
+    const handleViewRecord = (record) => {
+        console.log(record);
     };
 
     const cols = [
@@ -102,14 +106,19 @@ function SimulationResultList() {
                     <Popconfirm
                         title="Warning"
                         description="Are you sure to delete this record?"
-                        onConfirm={() => handleDeleteResult(record.id)}
+                        onConfirm={() => handleDeleteRecord(record.id)}
                         okText="Yes"
                         cancelText="No"
                         placement="left"
                     >
                         <Link type="danger">delete</Link>
                     </Popconfirm>
-                    <Link type="success">view</Link>
+                    <Link
+                        type="success"
+                        onClick={() => handleViewRecord(record.obj)}
+                    >
+                        view
+                    </Link>
                 </Space>
             ),
         },
