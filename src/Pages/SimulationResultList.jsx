@@ -42,7 +42,7 @@ function SimulationResultList() {
         );
     };
 
-    const handleDeleteRecord = async (id) => {
+    const handleDeleteRecordClick = async (id) => {
         const res = await invoke("delete_row", {
             table: "simulation_results",
             id: id,
@@ -59,7 +59,7 @@ function SimulationResultList() {
         }
     };
 
-    const handleDeleteAllRecord = async () => {
+    const handleDeleteAllRecordClick = async () => {
         const res = await invoke("delete_all_rows", {
             table: "simulation_results",
         });
@@ -75,7 +75,7 @@ function SimulationResultList() {
         }
     };
 
-    const handleViewRecord = (record) => {
+    const handleViewRecordClick = (record) => {
         console.log(record);
     };
 
@@ -149,7 +149,7 @@ function SimulationResultList() {
                     <Popconfirm
                         title="Warning"
                         description="Are you sure to delete this record?"
-                        onConfirm={() => handleDeleteRecord(record.id)}
+                        onConfirm={() => handleDeleteRecordClick(record.id)}
                         okText="Yes"
                         cancelText="No"
                         placement="left"
@@ -158,7 +158,7 @@ function SimulationResultList() {
                     </Popconfirm>
                     <Link
                         type="success"
-                        onClick={() => handleViewRecord(record.obj)}
+                        onClick={() => handleViewRecordClick(record.obj)}
                     >
                         view
                     </Link>
@@ -224,7 +224,7 @@ function SimulationResultList() {
                 <Popconfirm
                     title="Warning"
                     description="Are you sure to delete all records?"
-                    onConfirm={handleDeleteAllRecord}
+                    onConfirm={handleDeleteAllRecordClick}
                     okText="Yes"
                     cancelText="No"
                     placement="top"
