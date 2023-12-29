@@ -1,6 +1,7 @@
 import { Row, Col, Typography, Divider } from "antd";
 import ItemPropStats from "./ItemPropStats";
 import { getWeaponStr, getWeaponBaseStr } from "../Util/weapon";
+import TooltipDivider from "./TooltipDivider";
 
 const { Text } = Typography;
 
@@ -26,16 +27,7 @@ function WeaponStats({ weapon, width }) {
                     </span>
                 </Text>
             </Col>
-            <Divider
-                style={{
-                    color: "inherit",
-                    borderBlockStart: "0 white",
-                    marginBottom: 0,
-                    fontSize: "inherit",
-                }}
-            >
-                <span>Item Properties</span>
-            </Divider>
+            <TooltipDivider title="Item Properties" />
             <ItemPropStats itemProperties={weapon.item_properties} />
         </Row>
     );
