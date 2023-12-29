@@ -9,12 +9,12 @@ import {
     isPermissionGranted,
     requestPermission,
 } from "@tauri-apps/api/notification";
-import { useState } from "react";
+import { useContext } from "react";
 import { getVersion } from "@tauri-apps/api/app";
 import { ConfigProvider, Layout, Button, Flex, Typography, theme } from "antd";
 import { yellow } from "@ant-design/colors";
-import LeftMenu from "./LeftMenu";
-import HomePage from "./Pages/Home";
+import { AppContext } from "./App";
+import LeftMenu, { getMenuItemFromRoute } from "./LeftMenu";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -77,9 +77,8 @@ document.getElementById("root").style.maxHeight =
     headerConfig.height + innerWindowConfig.height + "px";
 
 function AppWindow({ themeStr }) {
+    const { pageRoute } = useContext(AppContext);
     const { token } = theme.useToken();
-    const [currentPage, setCurrentPage] = useState(<HomePage />);
-
     const headerButtonSize = 14;
 
     const windowMinimize = () => {
@@ -165,10 +164,7 @@ function AppWindow({ themeStr }) {
                 }}
             >
                 <Sider style={{ ...siderStyle }} theme={themeStr}>
-                    <LeftMenu
-                        theme={themeStr}
-                        setCurrentPage={setCurrentPage}
-                    />
+                    <LeftMenu theme={themeStr} />
 
                     <Text
                         type="secondary"
@@ -182,7 +178,7 @@ function AppWindow({ themeStr }) {
                     </Text>
                 </Sider>
                 <Content id="app-body-content" style={{ ...innerWindowConfig }}>
-                    {currentPage}
+                    {getMenuItemFromRoute(pageRoute)}
                 </Content>
             </Layout>
         </Layout>

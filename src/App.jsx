@@ -27,6 +27,7 @@ const darkTheme = {
 };
 
 function App() {
+    const [pageRoute, setPageRoute] = useState(["home"]);
     const [isSimulationInProgress, setIsSimulationInProgress] = useState(false);
     const [currentThemeStr, setCurrentThemeStr] = useState("light");
     const [messageApi, contextHolder] = message.useMessage();
@@ -52,6 +53,8 @@ function App() {
                     isSimulationInProgress: isSimulationInProgress,
                     setIsSimulationInProgress: setIsSimulationInProgress,
                     showMessage: showMessage,
+                    pageRoute: pageRoute,
+                    setPageRoute: setPageRoute,
                 }}
             >
                 {contextHolder}

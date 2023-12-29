@@ -14,7 +14,7 @@ import WeaponListPage from "./Pages/WeaponList";
 import { AppContext } from "./App";
 import SimulationResultList from "./Pages/SimulationResultList";
 
-function menuItem(label, key, icon, page, children, type) {
+function _menuItem(label, key, icon, page, children, type) {
     return {
         key,
         icon,
@@ -25,54 +25,69 @@ function menuItem(label, key, icon, page, children, type) {
     };
 }
 
-const items = [
-    menuItem("Simulator", "calculator", <CalculatorOutlined />, <HomePage />),
-    menuItem(
+export function getMenuItemFromRoute(route, _currentItem = undefined) {
+    if (route.length === 0) {
+        return _currentItem !== undefined ? _currentItem.page || <></> : <></>;
+    }
+
+    let menuItem = (
+        _currentItem === undefined ? menuItems : _currentItem.children
+    ).find((e) => e.key == route[0]);
+
+    return getMenuItemFromRoute(route.slice(1), menuItem);
+}
+
+export const menuItems = [
+    _menuItem("Simulator", "home", <CalculatorOutlined />, <HomePage />),
+    _menuItem(
         "Characters",
         "character_list",
         <TeamOutlined />,
         <CharacterListPage />
     ),
-    menuItem(
+    _menuItem(
         "Weapons",
         "weapon_list",
         <UnorderedListOutlined />,
         <WeaponListPage />
     ),
-    menuItem(
+    _menuItem(
         "Results",
         "result_viewer",
         <LineChartOutlined />,
         <SimulationResultList />
     ),
-    menuItem("About", "about", <InfoCircleOutlined />, <AboutPage />),
+    _menuItem("About", "about", <InfoCircleOutlined />, <AboutPage />),
 
-    // menuItem("Navigation Two", "sub2", null, null, [
-    //     menuItem("Option 5", "5"),
-    //     menuItem("Option 6", "6"),
-    //     menuItem("Submenu", "sub3", null, null, [
-    //         menuItem("Option 7", "7"),
-    //         menuItem("Option 8", "8"),
+    // _menuItem("Sub-Menu 1", "sub-menu-1", null, null, [
+    //     _menuItem("Sub-Menu 2", "sub-menu-2", null, null, [
+    //         _menuItem("Sub-Menu 3", "sub-menu-3", null, null, [
+    //             _menuItem(
+    //                 "Sub-Sub-Sub 1",
+    //                 "sub1-sub-menu-sub-menu-item-1",
+    //                 null,
+    //                 <>Sub-Sub-Sub 1</>
+    //             ),
+    //         ]),
+    //         _menuItem(
+    //             "Sub-Sub 1",
+    //             "sub-sub-1",
+    //             null,
+    //             <>Sub-Sub 1</>
+    //         ),
     //     ]),
+    //     _menuItem("Sub 2", "sub2", null, <>Sub 2</>),
+    //     _menuItem("Sub 3", "sub3", null, <>Sub 3</>),
     // ]),
 ];
 
-function LeftMenu({ theme, setCurrentPage }) {
-    const { isSimulationInProgress, showMessage } = useContext(AppContext);
-    const [openKeys, setOpenKeys] = useState(["calculator"]);
-    const [currentPageKey, setCurrentPageKey] = useState(items[0].key);
+function LeftMenu({ theme }) {
+    const { pageRoute, setPageRoute, isSimulationInProgress, showMessage } =
+        useContext(AppContext);
+    const [subMenuRoute, setSubMenuRoute] = useState([]);
 
     const onOpenChange = (keys) => {
-        const openMenuKey = keys.find((key) => openKeys.indexOf(key) === -1);
-
-        if (
-            openMenuKey &&
-            items.filter((item) => item.key === openMenuKey).length === 0
-        ) {
-            setOpenKeys(keys);
-        } else {
-            setOpenKeys(openMenuKey ? [openMenuKey] : []);
-        }
+        setSubMenuRoute(keys);
     };
 
     const onSelect = (e) => {
@@ -84,22 +99,21 @@ function LeftMenu({ theme, setCurrentPage }) {
             return;
         }
 
-        const page = e.item.props.page;
-        if (page !== undefined) {
-            setCurrentPage(page);
-            setCurrentPageKey(e.key);
+        if (e.item.props.page) {
+            const keyPath = e.keyPath.slice(1).reverse();
+            setPageRoute([...keyPath, e.key]);
         }
     };
 
     return (
         <Menu
             mode="inline"
-            items={items}
-            openKeys={openKeys}
+            items={menuItems}
+            openKeys={subMenuRoute}
+            selectedKeys={pageRoute}
+            theme={theme}
             onOpenChange={onOpenChange}
             onSelect={onSelect}
-            selectedKeys={currentPageKey}
-            theme={theme}
         />
     );
 }
