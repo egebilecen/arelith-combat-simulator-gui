@@ -1,15 +1,17 @@
 import { invoke } from "@tauri-apps/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Table } from "antd";
 import { Typography, Space, Divider, Popconfirm, Row, Col, Result } from "antd";
 import PageContainer from "../Sections/PageContainer";
 import Loading from "../Components/Loading";
 import HelpText, { LIST_SYMBOL } from "../Components/HelpText";
 import TooltipDivider from "../Components/TooltipDivider";
+import { AppContext } from "../App";
 
 const { Text, Link } = Typography;
 
 function SimulationResultList() {
+    const { showMessage } = useContext(AppContext);
     const [isLoading, setIsLoading] = useState(true);
     const [tableData, setTableData] = useState([]);
     const [osLocale, setOsLocale] = useState([]);
@@ -30,8 +32,21 @@ function SimulationResultList() {
         );
     };
 
-    const handleDeleteRecord = (id) => {
-        console.log(id);
+    const handleDeleteRecord = async (id) => {
+        const res = await invoke("delete_row", {
+            table: "simulation_results",
+            id: id,
+        });
+
+        if (res.success) {
+            showMessage("success", "The record is successfully deleted.");
+            setTableData(tableData.filter((e) => e.id !== id));
+        } else {
+            showMessage(
+                "error",
+                "An error occured while deleting the record: " + res.msg
+            );
+        }
     };
 
     const handleViewRecord = (record) => {
