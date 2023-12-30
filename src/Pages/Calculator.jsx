@@ -3,6 +3,7 @@ import { appWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
 import { getName } from "@tauri-apps/api/app";
 import { sendNotification } from "@tauri-apps/api/notification";
+import { createWindow, windows } from "../Util/window";
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import {
     Steps,
@@ -331,25 +332,25 @@ function CalculatorPage() {
                                 };
                             });
 
+                            const sim_result = {
+                                timestamp: new Date().getTime(),
+                                target_info: {
+                                    concealment:
+                                        simulationData.dummy.concealment,
+                                    has_epic_dodge:
+                                        simulationData.dummy.has_epic_dodge,
+                                    damage_immunity:
+                                        simulationData.dummy.damage_immunity,
+                                    defensive_essence:
+                                        simulationData.dummy.defensive_essence,
+                                },
+                                data: result,
+                            };
+
                             const res = await invoke("insert_row", {
                                 table: "simulation_results",
                                 name: "v1",
-                                json: JSON.stringify({
-                                    timestamp: new Date().getTime(),
-                                    target_info: {
-                                        concealment:
-                                            simulationData.dummy.concealment,
-                                        has_epic_dodge:
-                                            simulationData.dummy.has_epic_dodge,
-                                        damage_immunity:
-                                            simulationData.dummy
-                                                .damage_immunity,
-                                        defensive_essence:
-                                            simulationData.dummy
-                                                .defensive_essence,
-                                    },
-                                    data: result,
-                                }),
+                                json: JSON.stringify(sim_result),
                             });
 
                             if (!res.success) {
@@ -363,10 +364,29 @@ function CalculatorPage() {
                             setIsSimulationInProgress(false);
                             setSimulationProgressBarStatus("success");
                             setSimulationLogText(
-                                "Simulation is completed! " +
-                                    (res.success
-                                        ? "Results are saved."
-                                        : "Couldn't save the results due to an error, though.")
+                                <Text>
+                                    Simulation is completed!{" "}
+                                    {res.success ? (
+                                        <>
+                                            Click{" "}
+                                            <Link
+                                                onClick={() =>
+                                                    createWindow(
+                                                        "result-viewer-" +
+                                                            res.result,
+                                                        windows.result_viewer,
+                                                        sim_result
+                                                    )
+                                                }
+                                            >
+                                                here
+                                            </Link>{" "}
+                                            to view the result.
+                                        </>
+                                    ) : (
+                                        "Couldn't save the results due to an error, though."
+                                    )}
+                                </Text>
                             );
                             unlistenSimulationUpdate();
 
