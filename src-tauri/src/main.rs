@@ -5,6 +5,7 @@ mod commands;
 mod db;
 
 use commands::*;
+use tauri::Manager;
 
 fn main() {
     db::init_db();
@@ -25,8 +26,6 @@ fn main() {
     #[cfg(debug_assertions)]
     let tauri_builder = tauri_builder.setup(|app| {
         {
-            use tauri::Manager;
-
             let window = app.get_window("main").unwrap();
             window.open_devtools();
         }
@@ -34,6 +33,25 @@ fn main() {
     });
 
     tauri_builder
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::Destroyed => {
+                let window = event.window();
+
+                if window.label() == "main" {
+                    window.app_handle().exit(0);
+                }
+            }
+            tauri::WindowEvent::Focused(state) => {
+                #[cfg(debug_assertions)]
+                {
+                    if *state {
+                        let window = event.window();
+                        window.open_devtools();
+                    }
+                }
+            }
+            _ => {}
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
