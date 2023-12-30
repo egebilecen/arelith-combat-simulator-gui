@@ -1,6 +1,9 @@
 import { useState, createContext } from "react";
 import { ConfigProvider, message } from "antd";
 import AppWindow from "./AppWindow";
+import "@fontsource/noto-sans";
+import "./common.css";
+import "./app.css";
 
 export const AppContext = createContext(null);
 

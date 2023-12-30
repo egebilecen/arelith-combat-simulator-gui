@@ -1,6 +1,7 @@
 * {
     user-select: none !important;
     box-sizing: border-box !important;
+    font-family: "Noto Sans", "Segoe UI" !important;
 }
 
 html,

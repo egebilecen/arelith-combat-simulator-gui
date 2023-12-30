@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Flex } from "antd";
 import ReactECharts from "echarts-for-react";
 import Loading from "../../Components/Loading";
+import "../../common.css";
+import "./app.css";
 
 function App() {
     const [initialData, setInitialData] = useState(null);
