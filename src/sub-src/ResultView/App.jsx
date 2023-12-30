@@ -121,8 +121,12 @@ function App() {
                                                 <div style='margin: 0px 0 0;line-height:1;'>
                                                     <div style='margin: 0px 0 0;line-height:1;'>
                                                         ${e.marker}
-                                                        <span style='font-size:14px;color:#666;font-weight:400;'>${e.seriesName}</span>
-                                                        <span style='float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900'>${e.value}</span>
+                                                        <span style='font-size:14px;color:#666;font-weight:400;'>${
+                                                            e.seriesName
+                                                        }</span>
+                                                        <span style='float:right;margin-left:20px;font-size:14px;color:#666;font-weight:900'>${e.value.toFixed(
+                                                            2
+                                                        )}</span>
                                                         <div style='clear:both'></div>
                                                     </div>
 
