@@ -278,8 +278,6 @@ pub fn start_threaded_simulation(
         let dummy_defensive_essence = Mutex::new(dummy_defensive_essence);
 
         let handle = thread::spawn(move || {
-            let mut simulation_results = simulation_results.lock().unwrap();
-
             let app = app.lock().unwrap();
             let total_rounds = total_rounds.lock().unwrap();
             let character = character.lock().unwrap();
@@ -311,6 +309,7 @@ pub fn start_threaded_simulation(
                 *dummy_has_epic_dodge,
             );
 
+            let mut simulation_results = simulation_results.lock().unwrap();
             (*simulation_results).insert(id, result);
 
             let _ = app.emit_all(
