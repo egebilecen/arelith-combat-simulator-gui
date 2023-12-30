@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Flex } from "antd";
 import ReactECharts from "echarts-for-react";
 import Loading from "../../Components/Loading";
+import "@fontsource/noto-sans";
 import "../../common.css";
 import "./app.css";
 
@@ -71,6 +72,7 @@ function App() {
                                 width: "100%",
                                 height: "100%",
                                 paddingTop: 6,
+                                paddingBottom: 6,
                             }}
                             option={{
                                 title: {
@@ -84,6 +86,7 @@ function App() {
                                     left: "center",
                                     top: 0,
                                 },
+                                animationDuration: 500,
                                 tooltip: {
                                     trigger: "axis",
                                     axisPointer: {
@@ -161,6 +164,7 @@ function App() {
                                     nameLocation: "middle",
                                     nameTextStyle: {
                                         lineHeight: 24,
+                                        fontWeight: "bold",
                                     },
                                     type: "category",
                                     boundaryGap: false,
@@ -177,6 +181,7 @@ function App() {
                                     nameLocation: "middle",
                                     nameTextStyle: {
                                         lineHeight: 48,
+                                        fontWeight: "bold",
                                     },
                                     type: "value",
                                     min: 0,
@@ -194,10 +199,11 @@ function App() {
                                         lineStyle: {
                                             width: 3,
                                         },
-                                        // cursor: "default",
                                     };
                                 }),
-                                animationDuration: 500,
+                                textStyle: {
+                                    fontFamily: "Noto Sans",
+                                },
                             }}
                         />
                     );
