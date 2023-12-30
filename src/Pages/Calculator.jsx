@@ -526,7 +526,7 @@ function CalculatorPage() {
             <Flex gap="small" style={{ position: "relative", marginTop: 16 }}>
                 <Button
                     onClick={prevContent}
-                    style={{ width: 82 }}
+                    style={{ width: 88 }}
                     disabled={
                         isLoading ||
                         isErrorOccured ||
@@ -544,7 +544,7 @@ function CalculatorPage() {
                     }
                     style={{
                         position: "absolute",
-                        width: 82,
+                        width: 88,
                         right: 0,
                     }}
                     type="primary"
