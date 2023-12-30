@@ -12,7 +12,11 @@ use arelith::{
 };
 use serde::Serialize;
 use serde_json::Value;
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+    thread,
+};
 use tauri::Manager;
 
 #[derive(Clone, Serialize)]
@@ -239,6 +243,97 @@ pub fn start_simulation(
         SimulationUpdatePayload::new(
             "done",
             Some(serde_json::to_value(simulation_results).unwrap()),
+        ),
+    );
+}
+
+#[tauri::command(async)]
+pub fn start_threaded_simulation(
+    app: tauri::AppHandle,
+    total_rounds: i32,
+    mut characters: HashMap<i32, Character>,
+    dummy_ac_list: Vec<i32>,
+    dummy_concealment: i32,
+    dummy_has_epic_dodge: bool,
+    dummy_damage_immunity: i32,
+    dummy_defensive_essence: i32,
+) {
+    let simulation_results: Arc<Mutex<HashMap<i32, DamageTestResult>>> =
+        Arc::new(Mutex::new(HashMap::new()));
+    let mut threads = vec![];
+
+    let id_list: Vec<i32> = characters.keys().map(|e| e.to_owned()).collect();
+
+    for id in id_list {
+        let simulation_results = simulation_results.clone();
+
+        let cb_app = Mutex::new(app.clone());
+        let app = Mutex::new(app.clone());
+        let total_rounds = Mutex::new(total_rounds);
+        let character = Mutex::new(characters.remove(&id).unwrap());
+        let dummy_ac_list = Mutex::new(dummy_ac_list.clone());
+        let dummy_concealment = Mutex::new(dummy_concealment);
+        let dummy_has_epic_dodge = Mutex::new(dummy_has_epic_dodge);
+        let dummy_damage_immunity = Mutex::new(dummy_damage_immunity);
+        let dummy_defensive_essence = Mutex::new(dummy_defensive_essence);
+
+        let handle = thread::spawn(move || {
+            let mut simulation_results = simulation_results.lock().unwrap();
+
+            let app = app.lock().unwrap();
+            let total_rounds = total_rounds.lock().unwrap();
+            let character = character.lock().unwrap();
+            let dummy_ac_list = dummy_ac_list.lock().unwrap();
+            let dummy_concealment = dummy_concealment.lock().unwrap();
+            let dummy_has_epic_dodge = dummy_has_epic_dodge.lock().unwrap();
+            let dummy_damage_immunity = dummy_damage_immunity.lock().unwrap();
+            let dummy_defensive_essence = dummy_defensive_essence.lock().unwrap();
+
+            let combat_simulator = CombatSimulator::new(*total_rounds);
+
+            let callback_fn = move |_: &_, _: &_, _: &_| {
+                let cb_app = cb_app.lock().unwrap();
+
+                let _ = (*cb_app).emit_all(
+                    "simulation_update",
+                    SimulationUpdatePayload::new("working", None),
+                );
+            };
+
+            combat_simulator.set_damage_test_notifier(&callback_fn);
+
+            let result = combat_simulator.damage_test(
+                &*character,
+                (*dummy_ac_list).clone(),
+                *dummy_concealment,
+                *dummy_damage_immunity,
+                *dummy_defensive_essence,
+                *dummy_has_epic_dodge,
+            );
+
+            (*simulation_results).insert(id, result);
+
+            let _ = app.emit_all(
+                "simulation_update",
+                SimulationUpdatePayload::new(
+                    "character_complete",
+                    Some(serde_json::to_value(&*character).unwrap()),
+                ),
+            );
+        });
+
+        threads.push(handle);
+    }
+
+    for handle in threads {
+        handle.join().unwrap();
+    }
+
+    let _ = app.emit_all(
+        "simulation_update",
+        SimulationUpdatePayload::new(
+            "done",
+            Some(serde_json::to_value((*simulation_results.lock().unwrap()).clone()).unwrap()),
         ),
     );
 }

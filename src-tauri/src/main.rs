@@ -20,7 +20,8 @@ fn main() {
         get_base_weapons,
         create_character,
         create_weapon,
-        start_simulation
+        start_simulation,
+        start_threaded_simulation
     ]);
 
     #[cfg(debug_assertions)]
@@ -39,15 +40,6 @@ fn main() {
 
                 if window.label() == "main" {
                     window.app_handle().exit(0);
-                }
-            }
-            tauri::WindowEvent::Focused(state) => {
-                #[cfg(debug_assertions)]
-                {
-                    if *state {
-                        let window = event.window();
-                        window.open_devtools();
-                    }
                 }
             }
             _ => {}

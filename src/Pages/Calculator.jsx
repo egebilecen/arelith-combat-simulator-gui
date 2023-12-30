@@ -421,7 +421,7 @@ function CalculatorPage() {
         );
 
         try {
-            await invoke("start_simulation", {
+            await invoke("start_threaded_simulation", {
                 app: appWindow,
                 totalRounds: simulationData.simulation_rounds,
                 characters: characters,
