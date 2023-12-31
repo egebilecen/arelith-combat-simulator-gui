@@ -139,7 +139,7 @@ function CalculatorPage() {
                             <Form.Item
                                 name="simulation_rounds"
                                 label="Simulation Rounds"
-                                initialValue={100}
+                                initialValue={500000}
                             >
                                 <InputNumber
                                     min={1}
