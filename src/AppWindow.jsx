@@ -9,7 +9,7 @@ import {
     isPermissionGranted,
     requestPermission,
 } from "@tauri-apps/api/notification";
-import { useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { getVersion } from "@tauri-apps/api/app";
 import { ConfigProvider, Layout, Button, Flex, Typography, theme } from "antd";
 import { yellow } from "@ant-design/colors";
@@ -19,6 +19,7 @@ import LeftMenu, { getMenuItemFromRoute } from "./LeftMenu";
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
+const headerButtonSize = 14;
 const headerConfig = {
     height: 32,
     lineHeight: "32px",
@@ -42,44 +43,55 @@ const siderStyle = {
     borderBottomLeftRadius: windowConfig.borderRadius,
 };
 
-const appVersion = await getVersion();
-
-let permissionGranted = await isPermissionGranted();
-
-if (!permissionGranted) {
-    const permission = await requestPermission();
-    permissionGranted = permission === "granted";
-}
-
-await appWindow.setSize(
-    new LogicalSize(
-        800 + windowConfig.innerPadding,
-        headerConfig.height +
-            innerWindowConfig.height +
-            windowConfig.innerPadding
-    )
-);
-
-if (await invoke("is_debug")) {
-    const monitor = await currentMonitor();
-
-    if (monitor !== null) {
-        let size = await appWindow.innerSize();
-        await appWindow.setPosition(
-            new PhysicalPosition(monitor.size.width - size.width + 10, -10)
-        );
-    }
-} else {
-    document.addEventListener("contextmenu", (event) => event.preventDefault());
-}
-
 document.getElementById("root").style.maxHeight =
     headerConfig.height + innerWindowConfig.height + "px";
 
 function AppWindow({ themeStr }) {
     const { pageRoute } = useContext(AppContext);
     const { token } = theme.useToken();
-    const headerButtonSize = 14;
+    const [appVersion, setAppVersion] = useState("0.0.0");
+
+    useEffect(() => {
+        async function func() {
+            setAppVersion(await getVersion());
+
+            let permissionGranted = await isPermissionGranted();
+
+            if (!permissionGranted) {
+                const permission = await requestPermission();
+                permissionGranted = permission === "granted";
+            }
+
+            await appWindow.setSize(
+                new LogicalSize(
+                    800 + windowConfig.innerPadding,
+                    headerConfig.height +
+                        innerWindowConfig.height +
+                        windowConfig.innerPadding
+                )
+            );
+
+            if (await invoke("is_debug")) {
+                const monitor = await currentMonitor();
+
+                if (monitor !== null) {
+                    let size = await appWindow.innerSize();
+                    await appWindow.setPosition(
+                        new PhysicalPosition(
+                            monitor.size.width - size.width + 10,
+                            -10
+                        )
+                    );
+                }
+            } else {
+                document.addEventListener("contextmenu", (event) =>
+                    event.preventDefault()
+                );
+            }
+        }
+
+        func();
+    }, []);
 
     const windowMinimize = () => {
         appWindow.minimize();
