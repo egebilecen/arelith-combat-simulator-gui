@@ -8,6 +8,7 @@ use commands::*;
 use tauri::Manager;
 
 fn main() {
+    let _ = fix_path_env::fix();
     db::init_db();
 
     let tauri_builder = tauri::Builder::default().invoke_handler(tauri::generate_handler![
