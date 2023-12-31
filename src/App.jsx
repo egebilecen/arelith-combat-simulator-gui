@@ -1,5 +1,5 @@
 import { useState, createContext } from "react";
-import { ConfigProvider, message } from "antd";
+import { ConfigProvider, message, notification } from "antd";
 import AppWindow from "./AppWindow";
 import "@fontsource/noto-sans";
 import "./common.css";
@@ -33,7 +33,9 @@ function App() {
     const [pageRoute, setPageRoute] = useState(["home"]);
     const [isSimulationInProgress, setIsSimulationInProgress] = useState(false);
     const [currentThemeStr, setCurrentThemeStr] = useState("light");
-    const [messageApi, contextHolder] = message.useMessage();
+    const [messageApi, messageContextHolder] = message.useMessage();
+    const [notificationApi, notificationContextHolder] =
+        notification.useNotification();
 
     const showMessage = (type, text) => {
         messageApi.open({
@@ -56,11 +58,13 @@ function App() {
                     isSimulationInProgress: isSimulationInProgress,
                     setIsSimulationInProgress: setIsSimulationInProgress,
                     showMessage: showMessage,
+                    notificationApi: notificationApi,
                     pageRoute: pageRoute,
                     setPageRoute: setPageRoute,
                 }}
             >
-                {contextHolder}
+                {messageContextHolder}
+                {notificationContextHolder}
                 <AppWindow themeStr={currentThemeStr} />
             </AppContext.Provider>
         </ConfigProvider>

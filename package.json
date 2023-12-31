@@ -14,6 +14,7 @@
     "@fontsource/noto-sans": "^5.0.18",
     "@tauri-apps/api": "^1.5.1",
     "antd": "^5.11.5",
+    "compare-versions": "^6.1.0",
     "echarts-for-react": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

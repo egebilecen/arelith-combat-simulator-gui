@@ -21,3 +21,7 @@ th.ant-table-column-sort:hover {
 .ant-table-column-sort {
     background: inherit !important;
 }
+
+.ant-notification-topRight {
+    top: 54px !important;
+}

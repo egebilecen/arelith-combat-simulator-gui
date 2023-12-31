@@ -11,10 +11,23 @@ import {
 } from "@tauri-apps/api/notification";
 import { useState, useEffect, useContext } from "react";
 import { getVersion } from "@tauri-apps/api/app";
-import { ConfigProvider, Layout, Button, Flex, Typography, theme } from "antd";
+import {
+    compare as compareSemVer,
+    validate as validateSemVer,
+} from "compare-versions";
+import {
+    ConfigProvider,
+    Layout,
+    Button,
+    Flex,
+    Typography,
+    theme,
+    Space,
+} from "antd";
 import { yellow } from "@ant-design/colors";
 import { AppContext } from "./App";
 import LeftMenu, { getMenuItemFromRoute } from "./LeftMenu";
+import { LATEST_RELEASE_URL, RELEASES_URL } from "./config";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -47,13 +60,14 @@ document.getElementById("root").style.maxHeight =
     headerConfig.height + innerWindowConfig.height + "px";
 
 function AppWindow({ themeStr }) {
-    const { pageRoute } = useContext(AppContext);
+    const { pageRoute, notificationApi } = useContext(AppContext);
     const { token } = theme.useToken();
     const [appVersion, setAppVersion] = useState("0.0.0");
 
     useEffect(() => {
         async function func() {
-            setAppVersion(await getVersion());
+            const appVer = await getVersion();
+            setAppVersion(appVer);
 
             let permissionGranted = await isPermissionGranted();
 
@@ -87,6 +101,43 @@ function AppWindow({ themeStr }) {
                 document.addEventListener("contextmenu", (event) =>
                     event.preventDefault()
                 );
+            }
+
+            // Check update
+            const response = await fetch(LATEST_RELEASE_URL, {
+                method: "GET",
+                timeout: 15,
+            });
+            const latestRelease = JSON.parse(await response.text());
+            const latestVersion = latestRelease.tag_name;
+
+            if (
+                validateSemVer(latestVersion) &&
+                compareSemVer(latestVersion, appVer, ">")
+            ) {
+                const notificationKey = Date.now();
+                notificationApi.info({
+                    key: notificationKey,
+                    message: "A new version is available!",
+                    description:
+                        "A new version of the application is available. It is recommended to update the application as it may offer new features and/or bug fixes.",
+                    placement: "topRight",
+                    duration: 0,
+                    btn: (
+                        <Space>
+                            <Button
+                                type="primary"
+                                href={RELEASES_URL}
+                                target="_blank"
+                                onClick={() =>
+                                    notificationApi.destroy(notificationKey)
+                                }
+                            >
+                                View
+                            </Button>
+                        </Space>
+                    ),
+                });
             }
         }
 

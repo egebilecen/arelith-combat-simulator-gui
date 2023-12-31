@@ -7,7 +7,7 @@
     },
     "package": {
         "productName": "Arelith Combat Simulator",
-        "version": "1.0.0"
+        "version": "1.1.0"
     },
     "tauri": {
         "allowlist": {
@@ -30,6 +30,11 @@
             },
             "notification": {
                 "all": true
+            },
+            "http": {
+                "all": true,
+                "request": true,
+                "scope": ["https://api.github.com/repos/egebilecen/*"]
             }
         },
         "bundle": {
