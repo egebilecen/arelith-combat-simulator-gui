@@ -8,7 +8,7 @@ export const getDiceStr = (dice, removeD1 = false) => {
     return val;
 };
 
-export const getWeaponBaseStr = (weaponBase, setName = true) => {
+export const getWeaponBaseStr = (weaponBase) => {
     return (
         weaponBase.name +
         " (" +
@@ -19,6 +19,8 @@ export const getWeaponBaseStr = (weaponBase, setName = true) => {
             : "20") +
         ", x" +
         weaponBase.crit_multiplier +
+        ", " +
+        weaponBase.size +
         ")"
     );
 };
@@ -40,6 +42,8 @@ export const getWeaponStr = (weapon) => {
         (threatRange == 20 ? threatRange : threatRange + " - " + "20") +
         ", x" +
         critMultiplier +
+        ", " +
+        weapon.base.size +
         ")"
     );
 };
