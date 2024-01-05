@@ -22,6 +22,10 @@ th.ant-table-column-sort:hover {
     background: inherit !important;
 }
 
+.ant-table-column-sort.ant-table-cell-row-hover {
+    background: #fafafa !important;
+}
+
 .ant-notification-topRight {
     top: 54px !important;
 }
