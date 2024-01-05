@@ -3,10 +3,7 @@ use arelith::{
     character::{AbilityList, Character},
     dice::Dice,
     feat::feat_db::get_feat,
-    item::{
-        weapon_db::{get_weapon_base, get_weapon_base_list},
-        Damage, DamageType, ItemProperty, Weapon, WeaponBase,
-    },
+    item::{weapon_db::get_weapon_base_list, Damage, DamageType, ItemProperty, Weapon, WeaponBase},
     simulator::{CombatSimulator, DamageTestResult},
     size::SizeCategory,
 };
@@ -140,7 +137,7 @@ pub fn create_base_weapon(
 #[tauri::command(async)]
 pub fn create_weapon(
     name: &str,
-    base_weapon: &str,
+    base_weapon: WeaponBase,
     threat_range: i32,
     crit_mult: i32,
     item_props: Vec<Value>,
@@ -213,7 +210,7 @@ pub fn create_weapon(
         }
     }
 
-    Weapon::new(name.to_string(), get_weapon_base(base_weapon), iprops)
+    Weapon::new(name.to_string(), base_weapon, iprops)
 }
 
 #[tauri::command(async)]

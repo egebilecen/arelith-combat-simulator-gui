@@ -16,6 +16,7 @@ import {
     Divider,
     Typography,
     Popconfirm,
+    Segmented,
 } from "antd";
 import {
     PlusOutlined,
@@ -62,9 +63,11 @@ function WeaponListPage() {
     const [weaponList, setWeaponList] = useState([]);
     const [isWeaponFormOpen, setIsWeaponFormOpen] = useState(false);
     const [weaponForm] = Form.useForm();
-    const [baseWeapons, setBaseWeapons] = useState([]);
+    const [arelithBaseWeapons, setArelithBaseWeapons] = useState([]);
+    const [customBaseWeapons, setCustomBaseWeapons] = useState([]);
     const [showExtraField, setShowExtraField] = useState({});
     const [isCreatingWeapon, setIsCreatingWeapon] = useState(false);
+    const [baseWeaponType, setBaseWeaponType] = useState("Arelith");
 
     const handleNewWeaponClick = () => {
         setIsWeaponFormOpen(true);
@@ -138,9 +141,24 @@ function WeaponListPage() {
 
         try {
             const values = await weaponForm.validateFields();
+            const baseWeapon =
+                baseWeaponType === "Arelith"
+                    ? arelithBaseWeapons.filter(
+                          (e) => e.value == values.weapon.base_weapon
+                      )
+                    : customBaseWeapons.filter(
+                          (e) => e.value == values.weapon.base_weapon
+                      );
+
+            if (baseWeapon.length < 1) {
+                showMessage("error", "Couldn't get the selected base weapon.");
+                setIsCreatingWeapon(false);
+                return;
+            }
+
             const weapon = await invoke("create_weapon", {
                 name: values.weapon.name,
-                baseWeapon: values.weapon.base_weapon,
+                baseWeapon: baseWeapon[0].obj,
                 threatRange: values.weapon.threat_range_ovr,
                 critMult: values.weapon.crit_mult_ovr,
                 itemProps: values.item_properties || [],
@@ -185,10 +203,12 @@ function WeaponListPage() {
     // Load weapons
     useEffect(() => {
         async function func() {
-            const [rows, baseWeapons] = await Promise.all([
-                invoke("get_rows", { table: "weapons" }),
-                invoke("get_base_weapons", {}),
-            ]);
+            const [rows, _arelithBaseWeapons, _customBaseWeapons] =
+                await Promise.all([
+                    invoke("get_rows", { table: "weapons" }),
+                    invoke("get_base_weapons", {}),
+                    invoke("get_rows", { table: "base_weapons" }),
+                ]);
 
             setIsLoading(false);
 
@@ -198,24 +218,43 @@ function WeaponListPage() {
                 return;
             }
 
-            if (Object.keys(baseWeapons).length < 1) {
+            if (Object.keys(_arelithBaseWeapons).length < 1) {
                 setErrorText("Couldn't fetch base weapons.");
+                setIsErrorOccured(true);
+                return;
+            }
+
+            if (!_customBaseWeapons.success) {
+                setErrorText(_customBaseWeapons.msg);
                 setIsErrorOccured(true);
                 return;
             }
 
             setWeaponList(rows.result);
 
-            const baseWeaponsList = [];
-            for (const [key, val] of Object.entries(baseWeapons)) {
-                baseWeaponsList.push({
-                    title: getWeaponBaseStr(val),
-                    label: key,
-                    value: key,
-                });
-            }
+            setArelithBaseWeapons(
+                Object.entries(_arelithBaseWeapons).map(([key, val]) => {
+                    return {
+                        title: getWeaponBaseStr(val),
+                        label: key,
+                        value: key,
+                        obj: val,
+                    };
+                })
+            );
 
-            setBaseWeapons(baseWeaponsList);
+            setCustomBaseWeapons(
+                _customBaseWeapons.result.map((e) => {
+                    let obj = JSON.parse(e.json);
+
+                    return {
+                        title: getWeaponBaseStr(obj),
+                        label: e.name,
+                        value: e.id,
+                        obj: obj,
+                    };
+                })
+            );
         }
 
         func();
@@ -427,8 +466,40 @@ function WeaponListPage() {
                                 >
                                     <Select
                                         placeholder="Select a base weapon"
-                                        options={baseWeapons}
-                                        showSearch
+                                        options={
+                                            baseWeaponType === "Custom"
+                                                ? customBaseWeapons
+                                                : arelithBaseWeapons
+                                        }
+                                        dropdownRender={(menu) => (
+                                            <>
+                                                <Segmented
+                                                    options={[
+                                                        "Arelith",
+                                                        "Custom",
+                                                    ]}
+                                                    value={baseWeaponType}
+                                                    onChange={(val) => {
+                                                        setBaseWeaponType(val);
+                                                        weaponForm.setFieldValue(
+                                                            [
+                                                                "weapon",
+                                                                "base_weapon",
+                                                            ],
+                                                            undefined
+                                                        );
+                                                    }}
+                                                    block
+                                                />
+                                                <Divider
+                                                    style={{ margin: "8px 0" }}
+                                                />
+                                                {menu}
+                                            </>
+                                        )}
+                                        showSearch={
+                                            baseWeaponType === "Arelith"
+                                        }
                                     />
                                 </Form.Item>
                             </Col>
