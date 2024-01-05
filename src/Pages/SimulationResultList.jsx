@@ -21,7 +21,7 @@ import { createWindow, windows } from "../Util/window";
 
 const { Text, Link } = Typography;
 
-function SimulationResultList() {
+function SimulationResultListPage() {
     const { showMessage } = useContext(AppContext);
     const [isLoading, setIsLoading] = useState(true);
     const [tableData, setTableData] = useState([]);
@@ -77,7 +77,7 @@ function SimulationResultList() {
     };
 
     const handleViewRecordClick = (id, record) => {
-        createWindow("result-viewer-" + id, windows.result_viewer, record);
+        createWindow(id, windows.result_viewer, record);
     };
 
     const cols = [
@@ -255,4 +255,4 @@ function SimulationResultList() {
     );
 }
 
-export default SimulationResultList;
+export default SimulationResultListPage;

@@ -14,7 +14,7 @@ import CharacterListPage from "./Pages/CharacterList";
 import WeaponListPage from "./Pages/WeaponList";
 import BaseWeaponListPage from "./Pages/BaseWeaponList";
 import { AppContext } from "./App";
-import SimulationResultList from "./Pages/SimulationResultList";
+import SimulationResultListPage from "./Pages/SimulationResultList";
 
 function _menuItem(label, key, icon, page, children, type) {
     return {
@@ -45,7 +45,7 @@ export const menuItems = [
         "Results",
         "result_viewer",
         <LineChartOutlined />,
-        <SimulationResultList />
+        <SimulationResultListPage />
     ),
     _menuItem(
         "Characters",

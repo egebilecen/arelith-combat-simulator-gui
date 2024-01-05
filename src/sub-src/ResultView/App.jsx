@@ -1,4 +1,5 @@
 import { listen } from "@tauri-apps/api/event";
+import { getAll } from "@tauri-apps/api/window";
 import { useState, useEffect } from "react";
 import { Flex } from "antd";
 import ReactECharts from "echarts-for-react";
@@ -39,7 +40,15 @@ function App() {
     useEffect(() => {
         async function func() {
             await listen("initial_data", async (e) => {
-                setInitialData(e.payload);
+                if (initialData === null) setInitialData(e.payload);
+
+                const mainWebview = getAll().filter(
+                    (e) => e.label === "main"
+                )[0];
+
+                mainWebview.emit("results_loaded", {
+                    id: e.payload.id,
+                });
             });
         }
 

@@ -372,8 +372,7 @@ function CalculatorPage() {
                                             <Link
                                                 onClick={() =>
                                                     createWindow(
-                                                        "result-viewer-" +
-                                                            res.result,
+                                                        res.result,
                                                         windows.result_viewer,
                                                         sim_result
                                                     )
