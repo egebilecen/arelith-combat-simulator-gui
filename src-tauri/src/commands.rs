@@ -112,6 +112,32 @@ pub fn create_character(
 }
 
 #[tauri::command(async)]
+pub fn create_base_weapon(
+    name: &str,
+    size: &str,
+    damage: &str,
+    threat_range: i32,
+    crit_mult: i32,
+    damage_type: Vec<&str>,
+) -> WeaponBase {
+    WeaponBase::new(
+        name.to_string(),
+        SizeCategory::from(size),
+        if damage.contains("d") {
+            Dice::from(damage)
+        } else {
+            Dice::from(damage.parse::<i32>().unwrap())
+        },
+        threat_range,
+        crit_mult,
+        damage_type
+            .iter()
+            .map(|&dmg_type| DamageType::from(dmg_type))
+            .collect(),
+    )
+}
+
+#[tauri::command(async)]
 pub fn create_weapon(
     name: &str,
     base_weapon: &str,

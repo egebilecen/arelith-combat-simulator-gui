@@ -20,6 +20,7 @@ fn main() {
         delete_all_rows,
         get_base_weapons,
         create_character,
+        create_base_weapon,
         create_weapon,
         start_simulation,
         start_threaded_simulation

@@ -51,6 +51,7 @@ pub fn init_db() {
 
     _ = conn.execute(get_create_table_sql("characters").as_str(), ());
     _ = conn.execute(get_create_table_sql("weapons").as_str(), ());
+    _ = conn.execute(get_create_table_sql("base_weapons").as_str(), ());
     _ = conn.execute(get_create_table_sql("simulation_results").as_str(), ());
 }
 

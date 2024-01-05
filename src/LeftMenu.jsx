@@ -6,11 +6,13 @@ import {
     UnorderedListOutlined,
     InfoCircleOutlined,
     LineChartOutlined,
+    GoldOutlined,
 } from "@ant-design/icons";
 import HomePage from "./Pages/Home";
 import AboutPage from "./Pages/About";
 import CharacterListPage from "./Pages/CharacterList";
 import WeaponListPage from "./Pages/WeaponList";
+import BaseWeaponListPage from "./Pages/BaseWeaponList";
 import { AppContext } from "./App";
 import SimulationResultList from "./Pages/SimulationResultList";
 
@@ -40,6 +42,12 @@ export function getMenuItemFromRoute(route, _currentItem = undefined) {
 export const menuItems = [
     _menuItem("Simulator", "home", <CalculatorOutlined />, <HomePage />),
     _menuItem(
+        "Results",
+        "result_viewer",
+        <LineChartOutlined />,
+        <SimulationResultList />
+    ),
+    _menuItem(
         "Characters",
         "character_list",
         <TeamOutlined />,
@@ -52,10 +60,10 @@ export const menuItems = [
         <WeaponListPage />
     ),
     _menuItem(
-        "Results",
-        "result_viewer",
-        <LineChartOutlined />,
-        <SimulationResultList />
+        "Base Weapons",
+        "base_weapon_list",
+        <GoldOutlined />,
+        <BaseWeaponListPage />
     ),
     _menuItem("About", "about", <InfoCircleOutlined />, <AboutPage />),
 
