@@ -436,6 +436,7 @@ function WeaponListPage() {
                         layout="vertical"
                         requiredMark={false}
                         onValuesChange={handleWeaponFormValueChange}
+                        autoComplete="off"
                     >
                         <Row gutter={16}>
                             <Col span={12}>

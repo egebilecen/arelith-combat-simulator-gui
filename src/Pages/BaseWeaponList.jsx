@@ -306,7 +306,12 @@ function BaseWaponListPage() {
                         </Space>
                     }
                 >
-                    <Form form={form} layout="vertical" requiredMark={false}>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        requiredMark={false}
+                        autoComplete="off"
+                    >
                         <Row gutter={16}>
                             <Col span={16}>
                                 <Form.Item

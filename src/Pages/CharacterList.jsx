@@ -190,10 +190,7 @@ function CharacterListPage() {
         <>
             <PageContainer>
                 {!isLoading && !isErrorOccured && (
-                    <Flex
-                        justify="end"
-                        gap="small"
-                    >
+                    <Flex justify="end" gap="small">
                         {characterList.length > 1 && (
                             <Popconfirm
                                 title="Warning"
@@ -371,6 +368,7 @@ function CharacterListPage() {
                         form={characterForm}
                         layout="vertical"
                         requiredMark={false}
+                        autoComplete="off"
                     >
                         <Row gutter={16}>
                             <Col span={16}>

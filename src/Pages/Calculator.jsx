@@ -91,7 +91,12 @@ function CalculatorPage() {
                     subTitle={errorText}
                 />
             ) : (
-                <Form form={configForm} layout="vertical" requiredMark={false}>
+                <Form
+                    form={configForm}
+                    layout="vertical"
+                    requiredMark={false}
+                    autoComplete="false"
+                >
                     <Row gutter={16}>
                         <Col span={16}>
                             <Form.Item
