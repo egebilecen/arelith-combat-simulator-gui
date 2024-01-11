@@ -34,7 +34,11 @@ function SimulationResultListPage() {
         const date = new Date(timestamp);
 
         return (
-            date.toLocaleDateString(osLocale) +
+            date.toLocaleDateString(osLocale, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            }) +
             ", " +
             date.toLocaleTimeString(osLocale, {
                 hour: "2-digit",
