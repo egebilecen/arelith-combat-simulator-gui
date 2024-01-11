@@ -24,7 +24,7 @@ function AboutPage() {
                 . It simulates each round in combat, then summarizes the
                 statistics. It is open-source software, which can be found{" "}
                 <Link
-                    href="https://github.com/egebilecen/nwn-damage-calculator/tree/ui"
+                    href="https://github.com/egebilecen/arelith-combat-simulator-gui/"
                     target="_blank"
                 >
                     here
