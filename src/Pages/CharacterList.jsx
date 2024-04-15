@@ -578,6 +578,11 @@ function CharacterListPage() {
                                         placeholder="Select any features (Optional)"
                                         options={[
                                             {
+                                                label: "Monk",
+                                                value: "Monk",
+                                                title: "Sets the user's consecutive attack AB penalty to -3.",
+                                            },
+                                            {
                                                 label: "Blind Fight",
                                                 value: "Blind Fight",
                                                 title: "Feat",
