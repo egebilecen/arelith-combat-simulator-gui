@@ -467,6 +467,7 @@ function WeaponListPage() {
                                 >
                                     <Select
                                         placeholder="Select a base weapon"
+										filterSort={(a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase())}
                                         options={
                                             baseWeaponType === "Custom"
                                                 ? customBaseWeapons
